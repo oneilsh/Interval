@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MusicWheel</title>
+  
+  <!-- p5.js libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.sound.min.js"></script>
+  
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="css/style.css?v=4">
+  
+  <!-- Application modules -->
+  <script src="js/MusicMaker.js?v=7"></script>
+  <script src="js/SoundManager.js?v=7"></script>
+  <script src="js/Instrument.js?v=7"></script>
+  <script src="js/ScaleVisualizer.js?v=9"></script>
+  <script src="js/sketch.js?v=7"></script>
+</head>
+<body>
+  <div id="app-container">
+    <!-- Canvas fills the screen -->
+    <div id="canvas-container"></div>
+    
+    <!-- Floating control panel -->
+    <div id="controls-panel" class="expanded">
+      <button id="toggle-panel" class="toggle-btn" title="Toggle Controls">
+        <span class="icon">⚙</span>
+      </button>
+      
+      <div class="panel-content">
+        <div class="control-row">
+          <div class="control-group">
+            <label for="instrument-select">Temperament</label>
+            <select id="instrument-select">
+              <option value="Equal Tempered" selected>Equal Tempered</option>
+              <option value="Well Tempered">Well Tempered</option>
+              <option value="Carlos Super Just">Carlos Super Just</option>
+              <option value="Pythagorean">Pythagorean</option>
+              <option value="Grand Piano">Grand Piano</option>
+            </select>
+          </div>
+          
+          <div class="control-group">
+            <label for="note-select">Root</label>
+            <select id="note-select">
+              <option value="A">A</option>
+              <option value="A#">A♯</option>
+              <option value="B">B</option>
+              <option value="C" selected>C</option>
+              <option value="C#">C♯</option>
+              <option value="D">D</option>
+              <option value="D#">D♯</option>
+              <option value="E">E</option>
+              <option value="F">F</option>
+              <option value="F#">F♯</option>
+              <option value="G">G</option>
+              <option value="G#">G♯</option>
+            </select>
+          </div>
+          
+          <div class="control-group">
+            <label for="scale-select">Scale</label>
+            <select id="scale-select">
+              <option value="Major" selected>Major</option>
+              <option value="Minor">Minor</option>
+              <option value="Minor Pent.">Minor Pent.</option>
+              <option value="Major Pent.">Major Pent.</option>
+              <option value="Blues">Blues</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="control-row actions">
+          <label class="checkbox-inline">
+            <input type="checkbox" id="fifths-checkbox">
+            <span>Circle of Fifths</span>
+          </label>
+          
+          <button id="play-selected-btn" class="action-btn">▶ Play Selected</button>
+          
+          <button id="help-btn" class="action-btn help">?</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Help modal -->
+    <div id="help-panel" class="hidden">
+      <div class="help-modal">
+        <div class="help-header">
+          <h2>MusicWheel</h2>
+          <button id="close-help-btn">&times;</button>
+        </div>
+        <div class="help-content">
+          <p class="credit">Copyright Shawn T. O'Neil, 2013 | p5.js port 2024</p>
+          
+          <h3>🎹 Playing Notes</h3>
+          <p><kbd>1</kbd>–<kbd>=</kbd> plays all 12 chromatic notes from the root.<br>
+          <kbd>q</kbd>–<kbd>]</kbd> plays only the notes in the current scale.</p>
+          
+          <p>Click notes on the wheel to toggle them, then <strong>Play Selected</strong> to hear them together.</p>
+          
+          <h3>🎨 The Visualization</h3>
+          <p>Notes are colored by their fifth relationships. Toggle <strong>Circle of Fifths</strong> to see this arrangement. Detected chords appear in the center.</p>
+          
+          <h3>🎵 Temperaments</h3>
+          <p><strong>Equal:</strong> Modern standard, all keys sound alike.<br>
+          <strong>Well:</strong> Historical, each key has unique character.<br>
+          <strong>Pythagorean:</strong> Pure fifths, has a harsh "wolf interval".<br>
+          <strong>Carlos Super Just:</strong> Optimized pure intervals.</p>
+          
+          <h3>✨ Secret</h3>
+          <p>Play C augmented (C+E+G♯) to unlock a visualizer!</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Loading overlay -->
+    <div id="loading-overlay">
+      <div class="loading-content">
+        <div class="spinner"></div>
+        <p>Loading sounds...</p>
+        <p class="loading-progress"></p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

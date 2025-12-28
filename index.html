@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <title>Music Wheel &middot; Shawn T. O&#39;Neil</title>
+    <meta name="generator" content="Hugo 0.84.0" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="author" content="Shawn T. O&#39;Neil">
+    
+      <meta name="description" content="">
+    
+    
+    <link rel="canonical" href="/musicwheel/"/>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/monokai.css">
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+    
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css">
+    
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+    <meta property="og:title" content="Music Wheel" />
+<meta property="og:description" content="Back in my day, the word &ldquo;theory&rdquo; meant something. So, in all my attempts to learn music theory, I was stymied by suggestions of memorizing seemingly unrelated collections of patterns, facts, and rediculous nomenclature. With dedication, books, wiki pages, and a good instructor (Ed Dee of Corvallis), though, I was able to make some progress. To help, I wrote a little program for exploring scales, notes, chords, and temperament." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/musicwheel/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2013-11-16T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2013-11-16T00:00:00&#43;00:00" />
+
+
+    
+    <meta itemprop="name" content="Music Wheel">
+<meta itemprop="description" content="Back in my day, the word &ldquo;theory&rdquo; meant something. So, in all my attempts to learn music theory, I was stymied by suggestions of memorizing seemingly unrelated collections of patterns, facts, and rediculous nomenclature. With dedication, books, wiki pages, and a good instructor (Ed Dee of Corvallis), though, I was able to make some progress. To help, I wrote a little program for exploring scales, notes, chords, and temperament."><meta itemprop="datePublished" content="2013-11-16T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2013-11-16T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="896">
+<meta itemprop="keywords" content="Programming,Art," />
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Music Wheel"/>
+<meta name="twitter:description" content="Back in my day, the word &ldquo;theory&rdquo; meant something. So, in all my attempts to learn music theory, I was stymied by suggestions of memorizing seemingly unrelated collections of patterns, facts, and rediculous nomenclature. With dedication, books, wiki pages, and a good instructor (Ed Dee of Corvallis), though, I was able to make some progress. To help, I wrote a little program for exploring scales, notes, chords, and temperament."/>
+<meta name="twitter:site" content="@shawntoneil"/>
+
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<div class="container">
+
+
+<div id="container">
+	<header id="header">
+  
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo">
+          
+          <i class="logo" style="background-image: url('/css/images/logo.png')"></i>
+          
+          <span class="site-title">Shawn T. O&#39;Neil</span>
+      </a>
+      <nav id="main-nav">
+          
+          
+          <a class="main-nav-link" href="/">Home</a>
+          
+          
+          
+          
+
+          
+          <a class="main-nav-link" href="/aboutme/">Bio</a>
+          
+
+          
+          
+          
+          
+          <a class="main-nav-link" href="/tags/">Tags</a>
+          
+          
+      </nav>
+        <nav id="sub-nav">
+          <div class="profile" id="profile-nav">
+            <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/shawn_headshot.png"><i class="fa fa-caret-down"></i></a>
+          </div>
+        </nav>
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+              <input type="search" name="q" class="search-form-input" placeholder="Search">
+              <button type="submit" class="search-form-submit">
+              </button>
+              <input type="hidden" name="sitesearch" value="/" />
+         </form>
+        </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tbody>
+          <tr>
+          
+          
+          <td><a class="main-nav-link" href="/">Home</a></td>
+          
+          
+          
+          
+
+          
+          <td><a class="main-nav-link" href="/aboutme/">Bio</a></td>
+          
+
+          
+          
+          
+          
+          <td><a class="main-nav-link" href="/tags/">Tags</a></td>
+          
+          
+          <td>
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+          <input type="search" name="q" class="search-form-input" placeholder="Search">
+          <input type="hidden" name="sitesearch" value="/" />
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</header>
+
+   	
+   	<div class="outer">
+   	
+    	<aside id="profile">
+  <div class="inner profile-inner">
+    <div class="base-info profile-block">
+      
+      <img id="avatar" src="/shawn_headshot.png">
+      
+      <h2 id="name">Shawn T. O&#39;Neil</h2>
+      <h3 id="title">Creations, excursions, pictures, words, and colors.</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>Corvallis, OR</span>
+      
+    </div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        45
+        <span>Posts</span>
+      </div>
+      <div class="article-info-block">
+        
+          21
+        
+        <span>
+            Tags
+        </span>
+      </div>
+    </div>
+    <div class="profile-block social-links">
+      <table>
+        <tr>
+          
+<td><a href="//github.com/oneilsh" target="_blank" title="GitHub"><i class="fa fa-github"></i></a></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<td><a href="//flickr.com/photos/oneilsh" target="_blank" title="Flickr"><i class="fa fa-flickr"></i></a></td>
+
+
+
+
+
+
+
+<td><a href="//vimeo.com/user18695315" target="_blank" title="Vimeo"><i class="fa fa-vimeo"></i></a></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<td><a href="//linkedin.com/in/shawn-o-neil-b85244a8" target="_blank" title="LinkedIn"><i class="fa fa-linkedin"></i></a></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<td><a href="//facebook.com/oneilsh" target="_blank" title="Facebook"><i class="fa fa-facebook"></i></a></td>
+
+
+
+<td><a href="//twitter.com/shawntoneil" target="_blank" title="Twitter"><i class="fa fa-twitter"></i></a></td>
+
+
+          <td><a href="/index.xml" target="_blank" title="RSS"><i class="fa fa-rss"></i></a></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+
+    
+
+    <section id="main">
+    
+    <article id="page-undefined" class="article article-type-page" itemscope="" itemprop="blogPost">
+    <div class="article-inner">
+        
+            <img src="images/screenshot.png" class="article-banner">
+        
+
+        <header class="article-header">
+    <a href="/musicwheel/">
+    <h1 class="article-title" itemprop="name">
+        Music Wheel
+    </h1>
+    </a>
+    <div class="article-meta">
+
+        
+        
+            
+            
+        
+
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-tags"></i>
+                
+                
+                <a class="article-category-link" href="/tags/programming">Programming</a>
+                &middot;
+                
+                
+                <a class="article-category-link" href="/tags/art">Art</a>
+                
+                
+            </div>
+            
+        
+    </div>
+</header>
+
+        <div class="article-entry" itemprop="articleBody">
+            <p>Back in my day, the word &ldquo;theory&rdquo; meant something. So, in all my attempts to learn music theory, I was stymied by suggestions of memorizing seemingly unrelated collections of patterns, facts, and rediculous nomenclature. With dedication, books, wiki pages, and a good instructor (Ed Dee of Corvallis), though, I was able to make some progress. To help, I wrote a little program for exploring scales, notes, chords, and temperament.</p>
+<h3 id="downloads">Downloads</h3>
+<p>MusicWheel was build with <a href="http://processing.org">processing.org</a>. You can play with it by downloading one of the following (about 7 megabytes each):</p>
+<ul>
+<li><a href="images/MusicWheel_OSX.zip">Mac OSX</a></li>
+<li><a href="images/MusicWheel_linux32.zip">Linux, 32 bit</a></li>
+<li><a href="images/MusicWheel_linux64.zip">Linux, 64 bit</a></li>
+<li><a href="images/MusicWheel_windows32.zip">Windows, 32 bit</a></li>
+<li><a href="images/MusicWheel_windows64.zip">Windows, 64 bit</a></li>
+</ul>
+<p>(Note: On OSX, if you get an error about the application being &ldquo;damaged,&rdquo; try going to System Preferences -&gt; Security &amp; Privacy -&gt; Open.)</p>
+<h3 id="info">Info</h3>
+<p>Use keyboard keys 1 through = to play any of the 12 notes; use q through ] to play only those highlighted in the current scale. Playing a chord shows it (if it&rsquo;s major, minor, or one of the 7ths; e.g. try q+e+t keys simultaneously). Since most computer keyboards don&rsquo;t support many simultaneous key presses, you can also click on notes with your mouse, and then click &ldquo;Play Selected&rdquo; to play them simultaneously. To change the instrument or scale, set the desired scale and click the &ldquo;Update&rdquo; button. If you play a C augmented chord, you can &ldquo;unlock&rdquo; a neat sound visualization. Play C# augmented to turn it back off again.</p>
+<p>Currently this visualization only contains twelve distinct notes within a single octave.</p>
+<p>Notes are colored according to the relationships of fifths (a note and its &ldquo;fifth&rdquo; of ~1.5x the frequency&ndash;give or take an octave&ndash;producing a particularly pleasing sound). Note locations can be arranged by fifths to produce the &ldquo;circle of fifths.&rdquo; Colored lines are drawn between notes and fifths when played. In the current scale, the relative scale (either major or minor) is annotated with a small circle. You can hold chords while changing between the chromatic layout and the circle of fifths layout.</p>
+<p>The instrument dropdown allows you to play with different temperaments - nearly all modern instruments are in equal temperament, but historically a variety of temperaments (adjustments of tuning relating to the mathematics behind the fact that fifth [1.5x] relationships and octave [2x] relationships don&rsquo;t play nicely together) were used. Since it&rsquo;s not very often we see non-equally tempered instruments today, and even if you do find one you&rsquo;ll probably need to be able to play piano, I thought this was a fun addition.</p>
+<p>Cool things to notice:</p>
+<p>The number of fifths that are contained within the different scale types. When playing multiple simultaneous chords, you can see how they share notes: for example a C major chord (C, E, G) and an A-minor (A, C, E) share two notes, and all four together make Am7. Similarly, a chord like Daug  has three names: Daug (D, F#, A#), F#aug (F#, A#, D) and A#aug (A#, D, F#).</p>
+<p>Scales share notes as well: try changing from C major to A minor (the note indicated as the relative in C major) - they contain all the same notes, only the pattern starts on the A rather than the C! This also illustrates a relationship between common &ldquo;substitution&rdquo; chords, particularly given just the gamut of 12 notes in a single octave - in C major, try playing a scale of chords starting at C (keyboard keys q,e,t; then w,r,y; then e,t,u, and so on); Dm and F sound similar, as they use many of the same notes. We can also compare the changes between major and major pentatonic, minor and minor pentatonic, and minor pentatonic and blues scales.</p>
+<p>Equal temperament gives each scale within a scale type and each chord within a chord type a similar &ldquo;flavor&rdquo; or &ldquo;color,&rdquo; while other temperaments tweak the tuning of notes to give chords (and hence different keys) different frequency ratios. These adjustments in frequency ratios results in differing levels of harmony for various chords, resulting in each scale having a different &ldquo;color&rdquo;.*  For a dramatic example, compare C major to E major for the different temperaments. In pythagorean, there is a single pair of fifths badly out of tune (known as a &ldquo;wolf interval,&rdquo; the amount of out-of-tuneness called the pythagorean comma), which you can probably find. In some temperaments, some scales are thought to some to sound &ldquo;boring&rdquo; (perhaps all chords are too harmonious) or &ldquo;angry&rdquo; (perhaps some are quite harmonious while some are quite inharmonious) or just &ldquo;bad&rdquo; (all chords too inharmonious). Due to the nature of octave (2x) and fifth (1.5x) ratios never quite lining up, even equal temperament contains some amount of inharmony: this inharmony is simply equal across scale and chord types. Some consider this a pitfall of equal temperament resulting in lack of musical expression, and lament its dominance in modern music&ndash;see, e.g., &ldquo;How Equal Temperament Ruined Harmony (and Why You Should Care)&rdquo; by Ross Duffin.</p>
+<p>*In equal temperament, a chord progression in a key type (say, C to Dm to Em in C major) sounds similar to the same chord progression in another key of the same type (G, Am, Bm in G major) because the relative ratios of chord notes are equal. Similarly with chord types: the ratios of C-to-E-to-G in the C major chord are the same ratios as G-to-B-to-D in the G major chord (give or take some octaves).</p>
+        </div>
+        <footer class="article-footer">
+    <a data-url="/musicwheel/" data-id="fbb1a04451ed059ed844c56fafd4e0fd" class="article-share-link">
+        <i class="fa fa-share"></i>
+        Share
+    </a>
+    
+
+    <script>
+    (function ($) {
+        
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fa fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fa fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fa fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fa fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+    </script>
+</footer>
+
+    </div>
+
+    
+<nav id="article-nav">
+    
+    <a href="/timelapsething/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">
+          Older
+      </strong>
+      <div class="article-nav-title">Timelapse Thing</div>
+    </a>
+    
+
+    
+    <a href="/research-filedist/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">
+          Newer
+      </strong>
+      <div class="article-nav-title">Topology aware file distribution</div>
+    </a>
+    
+</nav>
+
+
+</article>
+
+
+
+    </section>
+
+   	
+    	<aside id="sidebar">
+    
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        ALL
+    </h3>
+    <div class="widget">
+      <ul id="recent-post">
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/llm_pubmed_search/" class="thumbnail">
+                    
+                        <span style="background-image:url(/llm_pubmed_search//llm_pubmed_search.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/llm_pubmed_search/" class="title">Searching and Summarizing PubMed with LLMs</a></p>
+                    <p class="item-date">
+                        <time datetime="2023-03-03 00:00:00 &#43;0000 UTC" itemprop="datePublished">March, 2023</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/n3c/" class="thumbnail">
+                    
+                        <span style="background-image:url(/n3c//images/new_hero4.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/n3c/" class="title">National COVID Cohort Collaborative</a></p>
+                    <p class="item-date">
+                        <time datetime="2021-06-20 00:00:00 &#43;0000 UTC" itemprop="datePublished">June, 2021</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/ds-at-osu/" class="thumbnail">
+                    
+                        <span style="background-image:url(/ds-at-osu//images/banner.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/ds-at-osu/" class="title">DataScience@OSU</a></p>
+                    <p class="item-date">
+                        <time datetime="2020-08-10 00:00:00 &#43;0000 UTC" itemprop="datePublished">August, 2020</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/tidytensor-post/" class="thumbnail">
+                    
+                        <span style="background-image:url(/tidytensor-post//images/tidytensor_banner.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/tidytensor-post/" class="title">TidyTensor - More Fun with Deep Learning</a></p>
+                    <p class="item-date">
+                        <time datetime="2019-09-16 00:00:00 &#43;0000 UTC" itemprop="datePublished">September, 2019</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/aboutme/" class="thumbnail">
+                    
+                        <span style="background-image:url(/aboutme//images/banner.jpg)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/aboutme/" class="title">Bio</a></p>
+                    <p class="item-date">
+                        <time datetime="2019-08-04 00:00:00 &#43;0000 UTC" itemprop="datePublished">August, 2019</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/homelab/" class="thumbnail">
+                    
+                        <span style="background-image:url(/homelab//images/banner.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/homelab/" class="title">Homelab</a></p>
+                    <p class="item-date">
+                        <time datetime="2019-05-18 00:00:00 &#43;0000 UTC" itemprop="datePublished">May, 2019</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/regression_trees_pt2/" class="thumbnail">
+                    
+                        <span style="background-image:url(/regression_trees_pt2//images/decision_tree_crop.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/regression_trees_pt2/" class="title">Random Forests &amp; Gradient Boosting</a></p>
+                    <p class="item-date">
+                        <time datetime="2019-03-26 00:00:00 &#43;0000 UTC" itemprop="datePublished">March, 2019</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/regression_trees/" class="thumbnail">
+                    
+                        <span style="background-image:url(/regression_trees//images/three_depths.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/regression_trees/" class="title">Regression Trees &amp; Bagging (more functional R)</a></p>
+                    <p class="item-date">
+                        <time datetime="2019-02-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">February, 2019</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018-07-25-autodifferntation-and-functional-operators-in-r/" class="thumbnail">
+                    
+                        <span style="background-image:url(/2018-07-25-autodifferntation-and-functional-operators-in-r//figure-html/unnamed-chunk-24-1.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/2018-07-25-autodifferntation-and-functional-operators-in-r/" class="title">Automatic Differentiation &amp; Functional Operators in R</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-08-08 00:00:00 &#43;0000 UTC" itemprop="datePublished">August, 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/biorecursion/" class="thumbnail">
+                    
+                        <span style="background-image:url(/biorecursion//images/banner.jpg)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/biorecursion/" class="title">Bio/Recursion: CS and Bioinformatics in R</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-03-09 00:00:00 &#43;0000 UTC" itemprop="datePublished">March, 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/apcb/" class="thumbnail">
+                    
+                        <span style="background-image:url(/apcb//images/primer_closed_1200.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/apcb/" class="title">A Primer for Computational Biology</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-02-12 00:00:00 &#43;0000 UTC" itemprop="datePublished">February, 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/3d_printing_notes/" class="thumbnail">
+                    
+                        <span style="background-image:url(/3d_printing_notes//images/banner.jpg)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/3d_printing_notes/" class="title">3D Printing &amp; Modeling, Online Tools</a></p>
+                    <p class="item-date">
+                        <time datetime="2017-11-03 00:00:00 &#43;0000 UTC" itemprop="datePublished">November, 2017</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/rstackdeque/" class="thumbnail">
+                    
+                        <span style="background-image:url(/rstackdeque//images/quicksort_vis.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/rstackdeque/" class="title">Rstackdeque</a></p>
+                    <p class="item-date">
+                        <time datetime="2015-07-12 00:00:00 &#43;0000 UTC" itemprop="datePublished">July, 2015</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/stained-glass/" class="thumbnail">
+                    
+                        <span style="background-image:url(/stained-glass//images/candleholder_web.jpg)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/stained-glass/" class="title">Stained Glass</a></p>
+                    <p class="item-date">
+                        <time datetime="2015-05-20 00:00:00 &#43;0000 UTC" itemprop="datePublished">May, 2015</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/functional-lsys/" class="thumbnail">
+                    
+                        <span style="background-image:url(/functional-lsys//images/banner.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/functional-lsys/" class="title">Functional Parameterized L-System</a></p>
+                    <p class="item-date">
+                        <time datetime="2014-10-15 00:00:00 &#43;0000 UTC" itemprop="datePublished">October, 2014</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/hiking-south-sister/" class="thumbnail">
+                    
+                        <span style="background-image:url(/hiking-south-sister//images/0008.jpg)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/hiking-south-sister/" class="title">Hiking South Sister Photos</a></p>
+                    <p class="item-date">
+                        <time datetime="2014-08-25 00:00:00 &#43;0000 UTC" itemprop="datePublished">August, 2014</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/research-butterflies/" class="thumbnail">
+                    
+                        <span style="background-image:url(/research-butterflies//images/vennsPoster.jpg)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/research-butterflies/" class="title">Climate Change Adaptation</a></p>
+                    <p class="item-date">
+                        <time datetime="2014-04-27 00:00:00 &#43;0000 UTC" itemprop="datePublished">April, 2014</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/steve-harvey/" class="thumbnail">
+                    
+                        <span style="background-image:url(/steve-harvey//images/banner.jpg)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/steve-harvey/" class="title">Steve Harvey Appearance</a></p>
+                    <p class="item-date">
+                        <time datetime="2014-04-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">April, 2014</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/marble-making/" class="thumbnail">
+                    
+                        <span style="background-image:url(/marble-making//images/marble2_web.JPG)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/marble-making/" class="title">Marble Making Timelapse</a></p>
+                    <p class="item-date">
+                        <time datetime="2014-03-20 00:00:00 &#43;0000 UTC" itemprop="datePublished">March, 2014</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/research-filedist/" class="thumbnail">
+                    
+                        <span style="background-image:url(/research-filedist//images/banner.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/research-filedist/" class="title">Topology aware file distribution</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-11-25 00:00:00 &#43;0000 UTC" itemprop="datePublished">November, 2013</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/musicwheel/" class="thumbnail">
+                    
+                        <span style="background-image:url(/musicwheel//images/screenshot.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/musicwheel/" class="title">Music Wheel</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-11-16 00:00:00 &#43;0000 UTC" itemprop="datePublished">November, 2013</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/timelapsething/" class="thumbnail">
+                    
+                        <span style="background-image:url(/timelapsething//images/gaussian.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/timelapsething/" class="title">Timelapse Thing</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-07-27 00:00:00 &#43;0000 UTC" itemprop="datePublished">July, 2013</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/glass-beads/" class="thumbnail">
+                    
+                        <span style="background-image:url(/glass-beads//images/pendants2_web.jpg)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/glass-beads/" class="title">Glass Beads</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-05-17 00:00:00 &#43;0000 UTC" itemprop="datePublished">May, 2013</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/research-transcriptomics/" class="thumbnail">
+                    
+                        <span style="background-image:url(/research-transcriptomics//images/ohr.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/research-transcriptomics/" class="title">Transcriptomics</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-02-04 00:00:00 &#43;0000 UTC" itemprop="datePublished">February, 2013</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/nerf/" class="thumbnail">
+                    
+                        <span style="background-image:url(/nerf//images/shotsDotplotBlaster.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/nerf/" class="title">A Statistical Analysis of Nerf Blasters and Darts</a></p>
+                    <p class="item-date">
+                        <time datetime="2012-08-06 00:00:00 &#43;0000 UTC" itemprop="datePublished">August, 2012</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/research-haplotyping/" class="thumbnail">
+                    
+                        <span style="background-image:url(/research-haplotyping//images/coloring.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/research-haplotyping/" class="title">Algorithmic Haplotyping</a></p>
+                    <p class="item-date">
+                        <time datetime="2012-04-12 00:00:00 &#43;0000 UTC" itemprop="datePublished">April, 2012</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/neil-anne-marie-wedding/" class="thumbnail">
+                    
+                        <span style="background-image:url(/neil-anne-marie-wedding//images/0006.jpg)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/neil-anne-marie-wedding/" class="title">Neil and Anne-Marie Wedding Photos</a></p>
+                    <p class="item-date">
+                        <time datetime="2010-12-21 00:00:00 &#43;0000 UTC" itemprop="datePublished">December, 2010</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/miscjava/" class="thumbnail">
+                    
+                        <span style="background-image:url(/miscjava//images/ColorDistance/banner.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/miscjava/" class="title">Misc. Small Java</a></p>
+                    <p class="item-date">
+                        <time datetime="2010-09-21 00:00:00 &#43;0000 UTC" itemprop="datePublished">September, 2010</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/microsoft-surface/" class="thumbnail">
+                    
+                        <span style="background-image:url(/microsoft-surface//images/banner.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/microsoft-surface/" class="title">CSE60416 System Interface Design, Microsoft Surface</a></p>
+                    <p class="item-date">
+                        <time datetime="2009-12-17 00:00:00 &#43;0000 UTC" itemprop="datePublished">December, 2009</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/online-finance/" class="thumbnail">
+                    
+                        <span style="background-image:url(/online-finance//images/prices.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/online-finance/" class="title">CSE60317 Online Algorithms For Computational Finance</a></p>
+                    <p class="item-date">
+                        <time datetime="2008-11-16 00:00:00 &#43;0000 UTC" itemprop="datePublished">November, 2008</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/slashdot-predicting/" class="thumbnail">
+                    
+                        <span style="background-image:url(/slashdot-predicting//images/fractile.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/slashdot-predicting/" class="title">CSE60647 Data Mining, Predicting on Slashdot</a></p>
+                    <p class="item-date">
+                        <time datetime="2008-04-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">April, 2008</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/research-alenex/" class="thumbnail">
+                    
+                        <span style="background-image:url(/research-alenex//images/banner.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/research-alenex/" class="title">Online Learning and the Newsvendor Problem</a></p>
+                    <p class="item-date">
+                        <time datetime="2008-01-19 00:00:00 &#43;0000 UTC" itemprop="datePublished">January, 2008</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/bobcash/" class="thumbnail">
+                    
+                        <span style="background-image:url(/bobcash//images/banner.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/bobcash/" class="title">CSE60622 Cryptography. BobCash</a></p>
+                    <p class="item-date">
+                        <time datetime="2007-10-20 00:00:00 &#43;0000 UTC" itemprop="datePublished">October, 2007</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/learning-ai/" class="thumbnail">
+                    
+                        <span style="background-image:url(/learning-ai//images/banner.jpg)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/learning-ai/" class="title">CCSE60171 Artificial Intelligence, Learning to Play Games</a></p>
+                    <p class="item-date">
+                        <time datetime="2006-10-06 00:00:00 &#43;0000 UTC" itemprop="datePublished">October, 2006</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/formal-logic/" class="thumbnail">
+                    
+                        <span style="background-image:url(/formal-logic//images/logic_banner.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/formal-logic/" class="title">Formal Logic</a></p>
+                    <p class="item-date">
+                        <time datetime="2005-03-19 00:00:00 &#43;0000 UTC" itemprop="datePublished">March, 2005</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/cs446/" class="thumbnail">
+                    
+                        <span style="background-image:url(/cs446//images/Balls1Crop.jpeg)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/cs446/" class="title">CS446, Computer Graphics</a></p>
+                    <p class="item-date">
+                        <time datetime="2005-03-18 00:00:00 &#43;0000 UTC" itemprop="datePublished">March, 2005</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/cs422/" class="thumbnail">
+                    
+                        <span style="background-image:url(/cs422//images/algs_banner.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/cs422/" class="title">CS422, Algorithms</a></p>
+                    <p class="item-date">
+                        <time datetime="2004-11-23 00:00:00 &#43;0000 UTC" itemprop="datePublished">November, 2004</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/cs322/" class="thumbnail">
+                    
+                        <span style="background-image:url(/cs322//images/lisp_banner.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/cs322/" class="title">CS322, Principles of Programming Languages</a></p>
+                    <p class="item-date">
+                        <time datetime="2004-09-23 00:00:00 &#43;0000 UTC" itemprop="datePublished">September, 2004</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/epistemology/" class="thumbnail">
+                    
+                        <span style="background-image:url(/epistemology//images/knowledge_quote.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/epistemology/" class="title">Epistemology</a></p>
+                    <p class="item-date">
+                        <time datetime="2004-08-20 00:00:00 &#43;0000 UTC" itemprop="datePublished">August, 2004</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/cs228/" class="thumbnail">
+                    
+                        <span style="background-image:url(/cs228//images/network_banner.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/cs228/" class="title">CS228, Network Programming</a></p>
+                    <p class="item-date">
+                        <time datetime="2003-10-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">October, 2003</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/gainclone/" class="thumbnail">
+                    
+                        <span style="background-image:url(/gainclone//images/ampfront_web.jpg)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/gainclone/" class="title">Gainclone Amplifier</a></p>
+                    <p class="item-date">
+                        <time datetime="2003-06-18 00:00:00 &#43;0000 UTC" itemprop="datePublished">June, 2003</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/cs222/" class="thumbnail">
+                    
+                        <span style="background-image:url(/cs222//images/avl_tree.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/cs222/" class="title">CS222, Data Structures</a></p>
+                    <p class="item-date">
+                        <time datetime="2003-05-17 00:00:00 &#43;0000 UTC" itemprop="datePublished">May, 2003</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/cellular-automata/" class="thumbnail">
+                    
+                        <span style="background-image:url(/cellular-automata//images/ca_banner.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/cellular-automata/" class="title">Cellular Automata</a></p>
+                    <p class="item-date">
+                        <time datetime="2003-04-14 00:00:00 &#43;0000 UTC" itemprop="datePublished">April, 2003</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/headamp/" class="thumbnail">
+                    
+                        <span style="background-image:url(/headamp//images/zippoclosed_web.jpg)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/headamp/" class="title">Headphone Amp</a></p>
+                    <p class="item-date">
+                        <time datetime="2003-01-07 00:00:00 &#43;0000 UTC" itemprop="datePublished">January, 2003</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/cs122/" class="thumbnail">
+                    
+                        <span style="background-image:url(/cs122//images/Queens2/screenshot.png)" alt="Music Wheel" class="thumbnail-image"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    
+                    <p class="item-title"><a href="/cs122/" class="title">CS122</a></p>
+                    <p class="item-date">
+                        <time datetime="2002-10-24 00:00:00 &#43;0000 UTC" itemprop="datePublished">October, 2002</time>
+                    </p>
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+    
+
+    
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Tags
+    </h3>
+    <div class="widget tagcloud">
+        
+        
+        <a href="/tags/adventures" style="font-size: 12px;">adventures</a>
+        
+        
+        <a href="/tags/ai" style="font-size: 12px;">ai</a>
+        
+        
+        <a href="/tags/art" style="font-size: 12px;">art</a>
+        
+        
+        <a href="/tags/audio" style="font-size: 12px;">audio</a>
+        
+        
+        <a href="/tags/biomedical" style="font-size: 12px;">biomedical</a>
+        
+        
+        <a href="/tags/class" style="font-size: 12px;">class</a>
+        
+        
+        <a href="/tags/data" style="font-size: 12px;">data</a>
+        
+        
+        <a href="/tags/deep-learning" style="font-size: 12px;">deep-learning</a>
+        
+        
+        <a href="/tags/diy" style="font-size: 12px;">diy</a>
+        
+        
+        <a href="/tags/glass" style="font-size: 12px;">glass</a>
+        
+        
+        <a href="/tags/infrastructure" style="font-size: 12px;">infrastructure</a>
+        
+        
+        <a href="/tags/machine-learning" style="font-size: 12px;">machine-learning</a>
+        
+        
+        <a href="/tags/nerf" style="font-size: 12px;">nerf</a>
+        
+        
+        <a href="/tags/philosophy" style="font-size: 12px;">philosophy</a>
+        
+        
+        <a href="/tags/photography" style="font-size: 12px;">photography</a>
+        
+        
+        <a href="/tags/programming" style="font-size: 12px;">programming</a>
+        
+        
+        <a href="/tags/r" style="font-size: 12px;">r</a>
+        
+        
+        <a href="/tags/research" style="font-size: 12px;">research</a>
+        
+        
+        <a href="/tags/teaching" style="font-size: 12px;">teaching</a>
+        
+        
+        <a href="/tags/theory" style="font-size: 12px;">theory</a>
+        
+        
+        <a href="/tags/writing" style="font-size: 12px;">writing</a>
+        
+    </div>
+</div>
+
+
+
+
+
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+
+    
+	</div>
+</div>
+
+<footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2023
+      Copyright Shawn T. O&rsquo;Neil 2018. Powered by <a href="//gohugo.io">Hugo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>.
+    </div>
+  </div>
+</footer>
+
+
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script src="/js/script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+<script type="text/javascript">
+var sc_project=505825; 
+var sc_invisible=1; 
+var sc_security=""; 
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/505825/0//1/" alt="Web
+Analytics"
+referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
+
+
+</body>
+</html>

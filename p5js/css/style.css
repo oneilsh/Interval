@@ -1,0 +1,465 @@
+/* MusicWheel p5.js - Responsive Floating UI */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-panel: rgba(18, 18, 26, 0.92);
+  --bg-input: rgba(30, 30, 42, 0.9);
+  --text-primary: #e8e8f0;
+  --text-secondary: #9898a8;
+  --text-muted: #606075;
+  --accent-primary: #7b68ee;
+  --accent-glow: rgba(123, 104, 238, 0.4);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* App container - full viewport */
+#app-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: 
+    radial-gradient(ellipse at 30% 20%, rgba(123, 104, 238, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(78, 205, 196, 0.04) 0%, transparent 50%),
+    var(--bg-primary);
+}
+
+/* Canvas fills everything */
+#canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#canvas-container canvas {
+  display: block;
+}
+
+/* ========================================
+   FLOATING CONTROL PANEL
+   ======================================== */
+
+#controls-panel {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* Toggle button */
+.toggle-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+}
+
+.toggle-btn:hover {
+  background: var(--accent-primary);
+  color: white;
+  transform: scale(1.05);
+}
+
+.toggle-btn .icon {
+  transition: transform 0.3s ease;
+}
+
+#controls-panel.expanded .toggle-btn .icon {
+  transform: rotate(90deg);
+}
+
+/* Panel content */
+.panel-content {
+  background: var(--bg-panel);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 90vw;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#controls-panel:not(.expanded) .panel-content {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  pointer-events: none;
+  position: absolute;
+}
+
+/* Control rows */
+.control-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.control-row.actions {
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Control groups */
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 100px;
+}
+
+.control-group label {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+/* Selects */
+select {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  padding: 8px 28px 8px 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%239898a8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+select:hover {
+  border-color: var(--accent-primary);
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* Checkbox */
+.checkbox-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.checkbox-inline input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent-primary);
+  cursor: pointer;
+}
+
+/* Action buttons */
+.action-btn {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 8px 14px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.action-btn:hover {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+}
+
+.action-btn.help {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  font-weight: 600;
+}
+
+/* ========================================
+   HELP MODAL
+   ======================================== */
+
+#help-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+#help-panel.hidden {
+  display: none;
+}
+
+.help-modal {
+  background: var(--bg-panel);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+}
+
+.help-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.help-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--accent-primary), #4ecdc4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+#close-help-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 28px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+  line-height: 1;
+}
+
+#close-help-btn:hover {
+  background: var(--bg-input);
+  color: var(--text-primary);
+}
+
+.help-content {
+  padding: 24px;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.help-content .credit {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.help-content h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 20px 0 8px 0;
+}
+
+.help-content h3:first-of-type {
+  margin-top: 0;
+}
+
+.help-content p {
+  margin-bottom: 10px;
+}
+
+.help-content strong {
+  color: var(--text-primary);
+}
+
+.help-content kbd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 2px 6px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--accent-primary);
+}
+
+/* ========================================
+   LOADING OVERLAY
+   ======================================== */
+
+#loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  transition: opacity 0.4s ease;
+}
+
+#loading-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-content {
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 20px auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-progress {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+/* ========================================
+   RESPONSIVE - SMALL SCREENS
+   ======================================== */
+
+@media (max-width: 600px) {
+  #controls-panel {
+    top: auto;
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    align-items: stretch;
+  }
+  
+  .toggle-btn {
+    position: absolute;
+    top: -52px;
+    right: 0;
+  }
+  
+  .panel-content {
+    max-width: 100%;
+  }
+  
+  .control-row {
+    justify-content: space-between;
+  }
+  
+  .control-group {
+    flex: 1;
+    min-width: 80px;
+  }
+  
+  select {
+    width: 100%;
+  }
+  
+  .help-modal {
+    max-height: 70vh;
+  }
+}
+
+@media (max-width: 400px) {
+  .control-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .control-group {
+    width: 100%;
+  }
+  
+  .control-row.actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+/* ========================================
+   KEYBOARD HINTS (shown on canvas)
+   ======================================== */
+
+.keyboard-hint {
+  position: fixed;
+  bottom: 100px;
+  left: 20px;
+  font-size: 11px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+@media (max-width: 600px) {
+  .keyboard-hint {
+    display: none;
+  }
+}
