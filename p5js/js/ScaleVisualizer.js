@@ -228,11 +228,11 @@ class ScaleVisualizer {
 
       // Smoothly rotate toward correct position
       const rootPos = this.noteLocations[currentRoot];
-      if (abs(correctPos - currentPos) >= 0.06) {
+      if (abs(correctPos - currentPos) >= 0.11) {
         if (rootPos <= 6.0) {
-          currentPos -= 0.05;
+          currentPos -= 0.1;
         } else {
-          currentPos += 0.05;
+          currentPos += 0.1;
         }
         changed = true;
       } else {
@@ -278,8 +278,6 @@ class ScaleVisualizer {
    * Main draw method
    */
   draw() {
-    this.drawOverallInfo();
-
     // First update alphas, then positions (prioritize visual feedback)
     let updated = this.updateNoteAlphasByCurrentScale();
     if (!updated) {
@@ -288,47 +286,6 @@ class ScaleVisualizer {
 
     this.drawChords();
     this.drawNotes();
-  }
-
-  /**
-   * Draw info text
-   */
-  drawOverallInfo() {
-    push();
-    colorMode(RGB, 255, 255, 255, 100);
-    fill(200, 200, 200, 80);
-    
-    // In WEBGL mode, coordinates are centered at 0,0
-    const leftX = -this.canvasWidth / 2 + 16;
-    const topY = -this.canvasHeight / 2 + 12;
-    const bottomY = this.canvasHeight / 2 - 12;
-    
-    // Adaptive text size
-    const infoSize = max(12, min(16, this.canvasWidth * 0.025));
-    textSize(infoSize);
-    textAlign(LEFT, TOP);
-    text(this.currentInstrument.getName(), leftX, topY);
-    text(this.musicMaker.getCurrentScaleName(), leftX, topY + infoSize + 4);
-    
-    // Show parent major key for modes
-    const parentKey = this.musicMaker.getParentMajorKey(
-      this.musicMaker.getCurrentRoot(),
-      this.musicMaker.getCurrentScaleType()
-    );
-    if (parentKey) {
-      fill(150, 180, 200, 70);
-      textSize(infoSize - 2);
-      text(`Same notes as ${parentKey} Major`, leftX, topY + (infoSize + 4) * 2);
-    }
-    
-    // Only show keyboard hints on larger screens
-    if (this.canvasWidth > 500) {
-      textSize(11);
-      textAlign(LEFT, BOTTOM);
-      fill(150, 150, 150, 60);
-      text('1–= All Notes  |  q–] Scale Notes', leftX, bottomY);
-    }
-    pop();
   }
 
   /**

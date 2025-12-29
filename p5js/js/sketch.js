@@ -17,9 +17,9 @@ let sequencePlayer;
 let instrumentSelect;
 let noteSelect;
 let scaleSelect;
-let fifthsCheckbox;
-let chromaticColorsCheckbox;
-let visualizerCheckbox;
+let orderRadios;
+let colorRadios;
+let spectrumRadios;
 let helpBtn;
 let progressionSelect;
 let playProgBtn;
@@ -33,6 +33,7 @@ let helpPanel;
 let loadingOverlay;
 let togglePanelBtn;
 let controlsPanel;
+let resetBtn;
 
 // State
 let isInitialized = false;
@@ -46,6 +47,10 @@ let lastHoveredNote = null;
 // Help status bar
 let helpStatusBar;
 let isHelpVisible = false;
+
+// Welcome overlay
+let welcomeOverlay;
+let welcomeStartBtn;
 
 // Font for WEBGL text rendering
 let mainFont;
@@ -98,6 +103,11 @@ function setup() {
     hideLoadingOverlay();
     isInitialized = true;
     isLoadingInstrument = false;
+    
+    // Show welcome overlay for first-time visitors
+    if (!localStorage.getItem('musicwheel-welcomed')) {
+      showWelcome();
+    }
   };
   
   // Create instrument with default temperament
@@ -107,6 +117,9 @@ function setup() {
   scaleVisualizer = new ScaleVisualizer(musicMaker, currentInstrument);
   scaleVisualizer.updateDimensions(w, h);
   
+  // Default to chromatic colors
+  scaleVisualizer.setChromaticColors(true);
+  
   // SoundVisualizer - radial visualization around the wheel
   soundVisualizer = new SoundVisualizer(
     currentInstrument,
@@ -115,7 +128,7 @@ function setup() {
   );
   
   // Create sequence player for demos
-  sequencePlayer = new SequencePlayer(musicMaker, currentInstrument, scaleVisualizer);
+  sequencePlayer = new SequencePlayer(musicMaker, currentInstrument, scaleVisualizer, soundVisualizer);
   
   // Setup UI
   setupUI();
@@ -148,9 +161,9 @@ function setupUI() {
   instrumentSelect = document.getElementById('instrument-select');
   noteSelect = document.getElementById('note-select');
   scaleSelect = document.getElementById('scale-select');
-  fifthsCheckbox = document.getElementById('fifths-checkbox');
-  chromaticColorsCheckbox = document.getElementById('chromatic-colors-checkbox');
-  visualizerCheckbox = document.getElementById('visualizer-checkbox');
+  orderRadios = document.querySelectorAll('input[name="order-mode"]');
+  colorRadios = document.querySelectorAll('input[name="color-mode"]');
+  spectrumRadios = document.querySelectorAll('input[name="spectrum-mode"]');
   helpBtn = document.getElementById('help-btn');
   closeHelpBtn = document.getElementById('close-help-btn');
   progressionSelect = document.getElementById('progression-select');
@@ -164,6 +177,19 @@ function setupUI() {
   controlsPanel = document.getElementById('controls-panel');
   noteTooltip = document.getElementById('note-tooltip');
   helpStatusBar = document.getElementById('help-status-bar');
+  welcomeOverlay = document.getElementById('welcome-overlay');
+  welcomeStartBtn = document.getElementById('welcome-start-btn');
+  
+  // Welcome overlay dismiss
+  if (welcomeStartBtn) {
+    welcomeStartBtn.addEventListener('click', dismissWelcome);
+  }
+  
+  // Reset button
+  resetBtn = document.getElementById('reset-btn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', resetApp);
+  }
   
   // Panel toggle
   togglePanelBtn.addEventListener('click', () => {
@@ -180,19 +206,25 @@ function setupUI() {
   noteSelect.addEventListener('change', onScaleChange);
   scaleSelect.addEventListener('change', onScaleChange);
   
-  // Circle of fifths checkbox
-  fifthsCheckbox.addEventListener('change', (e) => {
-    scaleVisualizer.setByFifths(e.target.checked);
+  // Order mode radio buttons (Chromatic / Fifths)
+  orderRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      scaleVisualizer.setByFifths(e.target.value === 'fifths');
+    });
   });
-  
-  // Chromatic colors checkbox
-  chromaticColorsCheckbox.addEventListener('change', (e) => {
-    scaleVisualizer.setChromaticColors(e.target.checked);
+
+  // Color mode radio buttons (Chromatic / Fifths)
+  colorRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      scaleVisualizer.setChromaticColors(e.target.value === 'chromatic');
+    });
   });
-  
-  // Visualizer checkbox
-  visualizerCheckbox.addEventListener('change', (e) => {
-    soundVisualizer.setShow(e.target.checked);
+
+  // Spectrum mode radio buttons (On / Off)
+  spectrumRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      soundVisualizer.setShow(e.target.value === 'on');
+    });
   });
   
   // Progression controls
@@ -243,8 +275,9 @@ function setupUI() {
       instrumentSelect,
       noteSelect,
       scaleSelect,
-      fifthsCheckbox,
-      chromaticColorsCheckbox
+      orderRadios,
+      colorRadios,
+      spectrumRadios
     });
   }
   
@@ -388,6 +421,74 @@ function hideLoadingOverlay() {
   if (loadingOverlay) {
     loadingOverlay.classList.add('hidden');
   }
+}
+
+/**
+ * Show welcome overlay
+ */
+function showWelcome() {
+  if (welcomeOverlay) {
+    welcomeOverlay.classList.remove('hidden');
+  }
+}
+
+/**
+ * Dismiss welcome overlay and remember the user has seen it
+ */
+function dismissWelcome() {
+  if (welcomeOverlay) {
+    welcomeOverlay.classList.add('hidden');
+  }
+  localStorage.setItem('musicwheel-welcomed', 'true');
+}
+
+/**
+ * Reset the app to initial state and show welcome screen
+ */
+function resetApp() {
+  // Stop any playing notes
+  const playing = musicMaker.getCurrentlyPlayingNotes();
+  for (const note of Object.keys(playing)) {
+    currentInstrument.stopNote(note);
+    musicMaker.releasePlayingNote(note);
+  }
+  
+  // Stop progression playback
+  stopProgressionPlayback();
+  
+  // Reset to default settings
+  musicMaker.setScale('C', 'Major');
+  noteSelect.value = 'C';
+  scaleSelect.value = 'Major';
+  
+  // Reset display settings
+  scaleVisualizer.setByFifths(false);
+  scaleVisualizer.setChromaticColors(true);
+  soundVisualizer.setShow(false);
+  
+  orderRadios.forEach(radio => {
+    radio.checked = (radio.value === 'chromatic');
+  });
+  colorRadios.forEach(radio => {
+    radio.checked = (radio.value === 'chromatic');
+  });
+  spectrumRadios.forEach(radio => {
+    radio.checked = (radio.value === 'off');
+  });
+  
+  // Reset progression
+  progressionSelect.value = '';
+  musicMaker.setProgression(null);
+  progressionDisplay.textContent = '-';
+  progressionControls.classList.add('hidden');
+  
+  // Close help panel if open
+  helpPanel.classList.add('hidden');
+  hideHelpStatusBar();
+  
+  // Clear the welcomed flag and show welcome screen
+  localStorage.removeItem('musicwheel-welcomed');
+  showWelcome();
 }
 
 /**

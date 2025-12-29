@@ -10,7 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.sound.min.js"></script>
   
   <!-- Custom styles -->
-  <link rel="stylesheet" href="css/style.css?v=75">
+  <link rel="stylesheet" href="css/style.css?v=80">
   
   <!-- Application modules -->
   <script src="js/MusicMaker.js?v=71"></script>
@@ -19,7 +19,7 @@
   <script src="js/ScaleVisualizer.js?v=70"></script>
   <script src="js/SoundVisualizer.js?v=70"></script>
   <script src="js/SequencePlayer.js?v=73"></script>
-  <script src="js/sketch.js?v=75"></script>
+  <script src="js/sketch.js?v=77"></script>
 </head>
 <body>
   <div id="app-container">
@@ -111,24 +111,45 @@
         
         <div class="divider"></div>
         
-        <label class="checkbox-inline" title="Arrange notes by their position in the circle of fifths instead of chromatically">
-          <input type="checkbox" id="fifths-checkbox">
-          <span>Circle of Fifths</span>
-        </label>
+        <div class="control-group">
+          <label>Order:</label>
+          <div class="segmented-control" title="Arrange notes chromatically (by step) or by harmonic relationship (Fifths)">
+            <input type="radio" name="order-mode" id="order-chromatic" value="chromatic" checked>
+            <label for="order-chromatic">Chromatic</label>
+            <input type="radio" name="order-mode" id="order-fifths" value="fifths">
+            <label for="order-fifths">Fifths</label>
+            <div class="segmented-slider"></div>
+          </div>
+        </div>
         
-        <label class="checkbox-inline" title="Color notes by frequency (low to high) instead of fifth relationships">
-          <input type="checkbox" id="chromatic-colors-checkbox">
-          <span>Chromatic Colors</span>
-        </label>
+        <div class="control-group">
+          <label>Colors:</label>
+          <div class="segmented-control" title="Choose whether note colors represent frequency (Chromatic) or harmonic relationships (Fifths)">
+            <input type="radio" name="color-mode" id="color-chromatic" value="chromatic" checked>
+            <label for="color-chromatic">Chromatic</label>
+            <input type="radio" name="color-mode" id="color-fifths" value="fifths">
+            <label for="color-fifths">Fifths</label>
+            <div class="segmented-slider"></div>
+          </div>
+        </div>
         
-        <label class="checkbox-inline" title="Show a spectrum visualizer around the wheel that reacts to playing notes">
-          <input type="checkbox" id="visualizer-checkbox">
-          <span>Spectrum</span>
-        </label>
+        <div class="control-group">
+          <label>Spectrum:</label>
+          <div class="segmented-control" title="Show a spectrum visualizer around the wheel that reacts to playing notes">
+            <input type="radio" name="spectrum-mode" id="spectrum-off" value="off" checked>
+            <label for="spectrum-off">Off</label>
+            <input type="radio" name="spectrum-mode" id="spectrum-on" value="on">
+            <label for="spectrum-on">On</label>
+            <div class="segmented-slider"></div>
+          </div>
+        </div>
         
         <div class="divider"></div>
         
-        <button id="help-btn" class="action-btn help" title="Show help and information">?</button>
+        <div class="bottom-actions">
+          <button id="help-btn" class="action-btn help" title="Show help and information">?</button>
+          <button id="reset-btn" class="reset-btn" title="Reset app and show welcome screen">Reset</button>
+        </div>
       </div>
     </div>
     
@@ -164,27 +185,27 @@
           
           <h3>The Wheel</h3>
           <p>The wheel shows all 12 notes arranged in a circle. Bright notes are "in the scale" - they belong to your selected key and will sound harmonious together. Dimmed notes are "outside the scale" - they can add tension or color but may clash.</p>
-          <p><strong>Circle of Fifths:</strong> This toggle changes how notes are arranged. Normally notes go up by half-steps (C, C#, D, D#...). The Circle of Fifths arranges them by "fifths" instead (C, G, D, A...). A fifth is the interval from "do" to "sol" - one of the most consonant sounds in music. This arrangement reveals why certain chords sound good together: neighbors on the circle share many notes.</p>
+          <p><strong>Circle of Fifths:</strong> This toggle changes how notes are arranged. Normally notes go up by half-steps (C, C#, D, D#...). The Circle of Fifths arranges them by "fifths" instead (C, G, D, A...). A <a href="#" class="demo-link" data-sequence="Equal Tempered,C,Major|C+G|1500">fifth</a> is the interval from "do" to "sol" - one of the most consonant sounds in music. This arrangement reveals why certain chords sound good together: neighbors on the circle share many notes.</p>
           <p><strong>Chromatic Colors:</strong> Changes whether colors represent pitch (low=red to high=violet) or position in the circle of fifths.</p>
           <p>The small dot shows the <strong>relative major/minor</strong>. Every major key has a "relative minor" that shares all the same notes but starts on a different root. For example, C Major and A Minor use the same seven notes (all white keys on a piano).</p>
           
           <h3>Scales and Modes</h3>
           <p>A <strong>scale</strong> is a collection of notes that sound good together. The most common are:</p>
           <ul>
-            <li><strong>Major</strong> - Bright and happy (think "Happy Birthday")</li>
-            <li><strong>Minor</strong> - Dark and melancholy (think minor-key movie themes)</li>
-            <li><strong>Pentatonic</strong> - A 5-note scale common in rock, blues, and folk music worldwide</li>
-            <li><strong>Blues</strong> - Pentatonic plus one extra "blue note" that gives it that bluesy sound</li>
+            <li><a href="#" class="demo-link" data-sequence="Equal Tempered,C,Major|C+E+G|1500"><strong>Major</strong></a> - Bright and happy (think "Happy Birthday")</li>
+            <li><a href="#" class="demo-link" data-sequence="Equal Tempered,C,Minor|C+D#+G|1500"><strong>Minor</strong></a> - Dark and melancholy (think minor-key movie themes)</li>
+            <li><a href="#" class="demo-link" data-sequence="Equal Tempered,C,Minor Pent.|C+D#+G|1500"><strong>Pentatonic</strong></a> - A 5-note scale common in rock, blues, and folk music worldwide</li>
+            <li><a href="#" class="demo-link" data-sequence="Equal Tempered,C,Blues|C+D#+F#+G|1500"><strong>Blues</strong></a> - Pentatonic plus one extra "blue note" that gives it that bluesy sound</li>
           </ul>
           <p><strong>Modes</strong> are variations of the major scale, each starting on a different note. They all use the same seven notes but have different "home bases," creating distinct moods:</p>
           <ul>
-            <li><strong>Ionian</strong> - The standard major scale</li>
-            <li><strong>Dorian</strong> - Minor but with a brighter 6th; common in jazz and Celtic music</li>
-            <li><strong>Phrygian</strong> - Minor with a dark, Spanish/Middle Eastern flavor</li>
-            <li><strong>Lydian</strong> - Major but dreamy and floating; the "Simpsons theme" sound</li>
-            <li><strong>Mixolydian</strong> - Major but with a bluesy 7th; common in rock</li>
-            <li><strong>Aeolian</strong> - The natural minor scale</li>
-            <li><strong>Locrian</strong> - Unstable and tense; rarely used as a "home" scale</li>
+            <li><a href="#" class="demo-link" data-sequence="Equal Tempered,C,Ionian|C+E+G|1500"><strong>Ionian</strong></a> - The standard major scale</li>
+            <li><a href="#" class="demo-link" data-sequence="Equal Tempered,D,Dorian|D+F+A|1500"><strong>Dorian</strong></a> - Minor but with a brighter 6th; common in jazz and Celtic music</li>
+            <li><a href="#" class="demo-link" data-sequence="Equal Tempered,E,Phrygian|E+G+B|1500"><strong>Phrygian</strong></a> - Minor with a dark, Spanish/Middle Eastern flavor</li>
+            <li><a href="#" class="demo-link" data-sequence="Equal Tempered,F,Lydian|F+A+C|1500"><strong>Lydian</strong></a> - Major but dreamy and floating; the "Simpsons theme" sound</li>
+            <li><a href="#" class="demo-link" data-sequence="Equal Tempered,G,Mixolydian|G+B+D|1500"><strong>Mixolydian</strong></a> - Major but with a bluesy 7th; common in rock</li>
+            <li><a href="#" class="demo-link" data-sequence="Equal Tempered,A,Aeolian|A+C+E|1500"><strong>Aeolian</strong></a> - The natural minor scale</li>
+            <li><a href="#" class="demo-link" data-sequence="Equal Tempered,B,Locrian|B+D+F|1500"><strong>Locrian</strong></a> - Unstable and tense; rarely used as a "home" scale</li>
           </ul>
           <p>The app shows which major key shares the same notes. For instance, D Dorian uses the same notes as C Major - it's just "C Major starting on D."</p>
           
@@ -227,6 +248,33 @@
         <div class="spinner"></div>
         <p>Loading sounds...</p>
         <p class="loading-progress"></p>
+      </div>
+    </div>
+    
+    <!-- Welcome overlay (first-time visitors) -->
+    <div id="welcome-overlay" class="hidden">
+      <div class="welcome-modal">
+        <h2>Welcome to MusicWheel</h2>
+        <p>Explore music theory through an interactive visualization. Play notes, build chords, and discover how different tuning systems change the sound of music.</p>
+        
+        <div class="keyboard-diagram">
+          <div class="keyboard-row">
+            <span class="keyboard-label">All 12 notes:</span>
+            <div class="keys">
+              <kbd class="note-c">1</kbd><kbd class="note-cs">2</kbd><kbd class="note-d">3</kbd><kbd class="note-ds">4</kbd><kbd class="note-e">5</kbd><kbd class="note-f">6</kbd><kbd class="note-fs">7</kbd><kbd class="note-g">8</kbd><kbd class="note-gs">9</kbd><kbd class="note-a">0</kbd><kbd class="note-as">-</kbd><kbd class="note-b">=</kbd>
+            </div>
+          </div>
+          <div class="keyboard-row offset">
+            <span class="keyboard-label">Scale notes only:</span>
+            <div class="keys">
+              <kbd class="note-c">Q</kbd><kbd class="note-d">W</kbd><kbd class="note-e">E</kbd><kbd class="note-f">R</kbd><kbd class="note-g">T</kbd><kbd class="note-a">Y</kbd><kbd class="note-b">U</kbd><kbd class="note-c">I</kbd><kbd class="note-d">O</kbd><kbd class="note-e">P</kbd><kbd class="note-f">[</kbd><kbd class="note-g">]</kbd>
+            </div>
+          </div>
+        </div>
+        
+        <p class="welcome-hint">You can also click notes on the wheel. Press <kbd>?</kbd> for full help.</p>
+        
+        <button id="welcome-start-btn" class="welcome-btn">Start Playing</button>
       </div>
     </div>
   </div>

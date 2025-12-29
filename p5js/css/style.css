@@ -9,9 +9,9 @@
   --text-primary: #e8e8f0;
   --text-secondary: #9898a8;
   --text-muted: #606075;
-  --accent-primary: #7b68ee;
-  --accent-glow: rgba(123, 104, 238, 0.4);
-  --border-color: rgba(255, 255, 255, 0.1);
+  --accent-primary: #a0a0d2;
+  --accent-glow: rgba(92, 92, 214, 0.3);
+  --border-color: rgba(255, 255, 255, 0.08);
   --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
@@ -197,6 +197,67 @@ select:focus {
   accent-color: var(--accent-primary);
   cursor: pointer;
   flex-shrink: 0;
+}
+
+/* Segmented Control (Slider for options) */
+.segmented-control {
+  display: flex;
+  position: relative;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 2px;
+  width: 100%;
+  height: 32px;
+  user-select: none;
+}
+
+.segmented-control input[type="radio"] {
+  display: none;
+}
+
+.segmented-control label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  z-index: 1;
+  transition: color 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0; /* Reset label margins */
+}
+
+.segmented-control input[type="radio"]:checked + label {
+  color: white;
+}
+
+.segmented-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(50% - 2px);
+  height: calc(100% - 4px);
+  background: #60607560; /* var(--text-primary); */
+  border-radius: 6px;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.segmented-control input#color-fifths:checked ~ .segmented-slider,
+.segmented-control input#order-fifths:checked ~ .segmented-slider,
+.segmented-control input#spectrum-on:checked ~ .segmented-slider {
+  transform: translateX(100%);
+}
+
+.segmented-control input#color-chromatic:checked ~ .segmented-slider,
+.segmented-control input#order-chromatic:checked ~ .segmented-slider,
+.segmented-control input#spectrum-off:checked ~ .segmented-slider {
+  transform: translateX(0);
 }
 
 /* Action buttons */
@@ -586,6 +647,181 @@ select:focus {
   font-size: 12px;
   color: var(--text-muted);
   margin-top: 8px;
+}
+
+/* ========================================
+   WELCOME OVERLAY
+   ======================================== */
+
+#welcome-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1500;
+  padding: 20px;
+}
+
+#welcome-overlay.hidden {
+  display: none;
+}
+
+.welcome-modal {
+  background: var(--bg-panel);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 32px 40px;
+  max-width: 680px;
+  text-align: center;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+}
+
+.welcome-modal h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+}
+
+.welcome-modal > p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 24px 0;
+}
+
+.keyboard-diagram {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.keyboard-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.keyboard-row:last-child {
+  margin-bottom: 0;
+}
+
+.keyboard-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  min-width: 100px;
+  text-align: right;
+}
+
+.keyboard-row .keys {
+  display: flex;
+  gap: 4px;
+}
+
+/* Offset for second row (scale notes) like real keyboard */
+.keyboard-row.offset .keys {
+  margin-left: 18px;
+}
+
+.keyboard-row kbd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  min-width: 32px;
+  text-align: center;
+  box-shadow: 0 2px 0 var(--border-color);
+}
+
+/* Chromatic note colors for C Major scale */
+.keyboard-row kbd.note-c  { background: hsl(0, 70%, 45%); color: white; }
+.keyboard-row kbd.note-cs { background: hsl(30, 70%, 45%); color: white; }
+.keyboard-row kbd.note-d  { background: hsl(60, 70%, 40%); color: white; }
+.keyboard-row kbd.note-ds { background: hsl(90, 70%, 40%); color: white; }
+.keyboard-row kbd.note-e  { background: hsl(120, 60%, 38%); color: white; }
+.keyboard-row kbd.note-f  { background: hsl(150, 60%, 40%); color: white; }
+.keyboard-row kbd.note-fs { background: hsl(180, 60%, 40%); color: white; }
+.keyboard-row kbd.note-g  { background: hsl(210, 65%, 50%); color: white; }
+.keyboard-row kbd.note-gs { background: hsl(240, 60%, 55%); color: white; }
+.keyboard-row kbd.note-a  { background: hsl(270, 55%, 50%); color: white; }
+.keyboard-row kbd.note-as { background: hsl(300, 55%, 45%); color: white; }
+.keyboard-row kbd.note-b  { background: hsl(330, 60%, 45%); color: white; }
+
+.welcome-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 24px !important;
+}
+
+.welcome-hint kbd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 2px 6px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--accent-primary);
+}
+
+.welcome-btn {
+  background: var(--accent-primary);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 10px;
+  padding: 14px 32px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.welcome-btn:hover {
+  background: hsl(200, 80%, 65%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(100, 180, 255, 0.3);
+}
+
+.welcome-btn:active {
+  transform: translateY(0);
+}
+
+/* Bottom action row (help + reset) */
+.bottom-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Reset button in control panel - de-emphasized */
+.reset-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  padding: 4px 0;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  opacity: 0.6;
+}
+
+.reset-btn:hover {
+  color: var(--text-secondary);
+  opacity: 1;
 }
 
 /* ========================================

@@ -17,12 +17,14 @@ class SequencePlayer {
    * @param {MusicMaker} musicMaker - Music theory engine
    * @param {Instrument} instrument - Sound playback
    * @param {ScaleVisualizer} scaleVisualizer - Visual display
+   * @param {SoundVisualizer} soundVisualizer - Spectrum visualizer
    * @param {Object} uiRefs - References to UI elements for syncing
    */
-  constructor(musicMaker, instrument, scaleVisualizer, uiRefs = {}) {
+  constructor(musicMaker, instrument, scaleVisualizer, soundVisualizer, uiRefs = {}) {
     this.musicMaker = musicMaker;
     this.instrument = instrument;
     this.scaleVisualizer = scaleVisualizer;
+    this.soundVisualizer = soundVisualizer;
     this.uiRefs = uiRefs;
     
     this.isPlaying = false;
@@ -153,8 +155,9 @@ class SequencePlayer {
       temperament: this.instrument.getName(),
       root: this.musicMaker.getCurrentRoot(),
       scale: this.musicMaker.getCurrentScaleType(),
-      fifths: this.scaleVisualizer.fifthsView,
-      chromaticColors: this.scaleVisualizer.chromaticColors
+      fifths: this.scaleVisualizer.byFifths,
+      chromaticColors: this.scaleVisualizer.chromaticColors,
+      spectrum: this.soundVisualizer ? this.soundVisualizer.show : false
     };
   }
   
@@ -204,16 +207,34 @@ class SequencePlayer {
     
     // Apply display settings
     if (config.fifths !== undefined) {
-      this.scaleVisualizer.setFifthsView(config.fifths);
-      if (this.uiRefs.fifthsCheckbox) {
-        this.uiRefs.fifthsCheckbox.checked = config.fifths;
+      this.scaleVisualizer.setByFifths(config.fifths);
+      if (this.uiRefs.orderRadios) {
+        const value = config.fifths ? 'fifths' : 'chromatic';
+        this.uiRefs.orderRadios.forEach(radio => {
+          radio.checked = (radio.value === value);
+        });
       }
     }
     
     if (config.chromaticColors !== undefined) {
       this.scaleVisualizer.setChromaticColors(config.chromaticColors);
-      if (this.uiRefs.chromaticColorsCheckbox) {
-        this.uiRefs.chromaticColorsCheckbox.checked = config.chromaticColors;
+      if (this.uiRefs.colorRadios) {
+        const value = config.chromaticColors ? 'chromatic' : 'fifths';
+        this.uiRefs.colorRadios.forEach(radio => {
+          radio.checked = (radio.value === value);
+        });
+      }
+    }
+    
+    if (config.spectrum !== undefined) {
+      if (this.soundVisualizer) {
+        this.soundVisualizer.setShow(config.spectrum);
+      }
+      if (this.uiRefs.spectrumRadios) {
+        const value = config.spectrum ? 'on' : 'off';
+        this.uiRefs.spectrumRadios.forEach(radio => {
+          radio.checked = (radio.value === value);
+        });
       }
     }
   }
