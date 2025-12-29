@@ -332,6 +332,41 @@ class MusicMaker {
     this.progressionStep = (this.progressionStep - 1 + prog.steps.length) % prog.steps.length;
     return this.getCurrentProgressionChord();
   }
+  
+  /**
+   * Convert current progression to sequence format
+   * This allows progressions to be used with the SequencePlayer
+   * @param {number} duration - Duration per chord in ms
+   * @returns {Object} Sequence object compatible with SequencePlayer
+   */
+  progressionToSequence(duration = 1000) {
+    if (!this.currentProgression) return null;
+    
+    const prog = this.chordProgressions[this.currentProgression];
+    const events = [];
+    
+    // Save current step
+    const savedStep = this.progressionStep;
+    
+    // Generate events for each chord in the progression
+    for (let i = 0; i < prog.steps.length; i++) {
+      this.progressionStep = i;
+      const notes = this.getCurrentProgressionNotes();
+      events.push({
+        notes: notes,
+        duration: duration,
+        sustain: duration * 0.8
+      });
+    }
+    
+    // Restore original step
+    this.progressionStep = savedStep;
+    
+    return {
+      config: {},  // Don't change config - use current settings
+      events: events
+    };
+  }
 
   /**
    * Setup note name to number mapping (A=0 through G#=11)

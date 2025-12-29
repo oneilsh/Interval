@@ -10,15 +10,16 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.sound.min.js"></script>
   
   <!-- Custom styles -->
-  <link rel="stylesheet" href="css/style.css?v=65">
+  <link rel="stylesheet" href="css/style.css?v=70">
   
   <!-- Application modules -->
-  <script src="js/MusicMaker.js?v=63"></script>
-  <script src="js/SoundManager.js?v=63"></script>
-  <script src="js/Instrument.js?v=63"></script>
-  <script src="js/ScaleVisualizer.js?v=63"></script>
-  <script src="js/SoundVisualizer.js?v=63"></script>
-  <script src="js/sketch.js?v=63"></script>
+  <script src="js/MusicMaker.js?v=71"></script>
+  <script src="js/SoundManager.js?v=70"></script>
+  <script src="js/Instrument.js?v=70"></script>
+  <script src="js/ScaleVisualizer.js?v=70"></script>
+  <script src="js/SoundVisualizer.js?v=70"></script>
+  <script src="js/SequencePlayer.js?v=73"></script>
+  <script src="js/sketch.js?v=70"></script>
 </head>
 <body>
   <div id="app-container">
@@ -153,7 +154,7 @@
             <li><strong>Number row</strong> (<kbd>1</kbd> through <kbd>=</kbd>): Plays all 12 notes in Western music, starting from your chosen root note. These are the "chromatic" notes - every key on a piano, both white and black.</li>
             <li><strong>Letter row</strong> (<kbd>q</kbd> through <kbd>]</kbd>): Plays only the notes in your selected scale (usually 7 notes). This makes it easy to improvise without hitting "wrong" notes.</li>
           </ul>
-          <p>You can also click notes on the wheel. When you play multiple notes together, the app identifies the <strong>chord</strong> (a group of notes that sound good together) and displays its name in the center. Common chords include major (happy/bright), minor (sad/dark), and seventh chords (jazzy/complex).</p>
+          <p>You can also click notes on the wheel. When you play multiple notes together, the app identifies the <strong>chord</strong> (a group of notes that sound good together) and displays its name in the center. Common chords include <a href="#" class="demo-link" data-sequence="Equal Tempered,C,Major|C+E+G|1500">major (happy/bright)</a>, <a href="#" class="demo-link" data-sequence="Equal Tempered,C,Minor|C+D#+G|1500">minor (sad/dark)</a>, and <a href="#" class="demo-link" data-sequence="Equal Tempered,C,Major|C+E+G+A#|1500">seventh chords (jazzy/complex)</a>.</p>
           
           <h3>The Wheel</h3>
           <p>The wheel shows all 12 notes arranged in a circle. Bright notes are "in the scale" - they belong to your selected key and will sound harmonious together. Dimmed notes are "outside the scale" - they can add tension or color but may clash.</p>
@@ -197,16 +198,16 @@
           <p><strong>Important:</strong> Except for Equal Tempered, all temperaments are "keyed" - they're designed around a specific root note. The samples in this app are tuned relative to C, so C Major represents the "home" key where the tuning is optimized. When you select a different root note, the temperament characteristics shift accordingly - you're essentially playing in a key that's "farther" or "closer" to the tuning's home base.</p>
           
           <p><strong>Equal Tempered</strong> (Modern Standard)</p>
-          <p>The one temperament that isn't keyed. Every half-step is exactly the same size, so every key sounds identical and you can transpose freely. The trade-off: no interval is perfectly pure (e.g. a perfect fifth should be 3:2 = 1.5, but in equal temperament it's ~1.498). This tiny compromise in every interval is why modern instruments can play in any key. This is how virtually all contemporary instruments are tuned.</p>
+          <p>The one temperament that isn't keyed. Every half-step is exactly the same size, so every key sounds identical and you can transpose freely. The trade-off: no interval is perfectly pure (e.g. a perfect fifth should be 3:2 = 1.5, but in equal temperament it's ~1.498). This tiny compromise in every interval is why modern instruments can play in any key. This is how virtually all contemporary instruments are tuned. Listen to <a href="#" class="demo-link" data-sequence="Equal Tempered,C,Major|C+E+G|2000">C Major</a> then <a href="#" class="demo-link" data-sequence="Equal Tempered,F#,Major|F#+A#+C#|2000">F# Major</a> - they sound identical in character.</p>
           
           <p><strong>Well Tempered</strong> (Baroque Era)</p>
-          <p>Notes are adjusted so that all keys are playable, but each key retains its own "color." Keys close to C (few sharps/flats) sound purer and brighter because the tuning favors them. Keys far from C (like F# Major with six sharps) accumulate small tuning compromises that make them sound more tense and darker. Bach wrote "The Well-Tempered Clavier" specifically to showcase how each of the 24 keys has its own character. Try playing a C Major chord, then an F# Major chord - you'll hear C sound clean while F# has more "edge."</p>
+          <p>Notes are adjusted so that all keys are playable, but each key retains its own "color." Keys close to C (few sharps/flats) sound purer and brighter because the tuning favors them. Keys far from C (like F# Major with six sharps) accumulate small tuning compromises that make them sound more tense and darker. Bach wrote "The Well-Tempered Clavier" specifically to showcase how each of the 24 keys has its own character. Compare <a href="#" class="demo-link" data-sequence="Well Tempered,C,Major|C+E+G|2000">C Major (pure)</a> to <a href="#" class="demo-link" data-sequence="Well Tempered,F#,Major|F#+A#+C#|2000">F# Major (edgy)</a> - you'll hear C sound clean while F# has more tension.</p>
           
           <p><strong>Pythagorean</strong> (Ancient Greek)</p>
-          <p>Built entirely by stacking pure fifths (3:2 ratio) starting from C. Fifths sound incredibly pure, but here's the problem: if you stack 12 perfect fifths (C→G→D→A→E→B→F#→C#→G#→D#→A#→F→C), you should return to C - but mathematically, you land slightly sharp. This leftover error (called the "Pythagorean comma") has to go somewhere, creating one horribly out-of-tune interval called the <strong>"wolf fifth"</strong> - traditionally placed between G# and Eb where it was least likely to be needed. To hear it, play G# and D# together - instead of a pure fifth, you get a dissonant howl!</p>
+          <p>Built entirely by stacking pure fifths (3:2 ratio) starting from C. Fifths sound incredibly pure, but here's the problem: if you stack 12 perfect fifths (C→G→D→A→E→B→F#→C#→G#→D#→A#→F→C), you should return to C - but mathematically, you land slightly sharp. This leftover error (called the "Pythagorean comma") has to go somewhere, creating one horribly out-of-tune interval called the <strong>"wolf fifth"</strong> - traditionally placed between G# and Eb where it was least likely to be needed. <a href="#" class="demo-link" data-sequence="Pythagorean|G#+D#|2500">Hear the wolf fifth</a> - instead of a pure fifth, you get a dissonant howl! Compare to a <a href="#" class="demo-link" data-sequence="Pythagorean|C+G|2500">pure C-G fifth</a>.</p>
           
           <p><strong>Carlos Super Just</strong></p>
-          <p>Created by electronic music pioneer Wendy Carlos for her groundbreaking synthesizer albums. This is a form of "just intonation" - tuning based on pure mathematical ratios. Chords in C and nearby keys sound incredibly pure and beatless because their intervals are exact ratios (like 5:4 for major thirds). But this purity comes at a cost: keys far from C (like F# or Db) sound noticeably out of tune. Try comparing a C Major triad (pure, locked-in) to an F# Major triad (buzzy, restless) to hear the dramatic difference.</p>
+          <p>Created by electronic music pioneer Wendy Carlos for her groundbreaking synthesizer albums. This is a form of "just intonation" - tuning based on pure mathematical ratios. Chords in C and nearby keys sound incredibly pure and beatless because their intervals are exact ratios (like 5:4 for major thirds). But this purity comes at a cost: keys far from C sound noticeably out of tune. Compare <a href="#" class="demo-link" data-sequence="Carlos Super Just,C,Major|C+E+G|2000">C Major (pure, locked-in)</a> to <a href="#" class="demo-link" data-sequence="Carlos Super Just,F#,Major|F#+A#+C#|2000">F# Major (buzzy, restless)</a> to hear the dramatic difference.</p>
           
           <h3>Spectrum Visualizer</h3>
           <p>Toggle <strong>Spectrum</strong> to see a visualization around the wheel that responds to the sounds being played. It combines frequency analysis with direct note tracking for a fun (if not scientifically precise) display.</p>

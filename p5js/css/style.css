@@ -436,6 +436,25 @@ select:focus {
   line-height: 1.5;
 }
 
+/* Demo links - clickable examples in help text */
+.demo-link {
+  color: var(--accent-primary);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--accent-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.demo-link:hover {
+  color: var(--accent-secondary);
+  border-bottom-color: var(--accent-secondary);
+  border-bottom-style: solid;
+}
+
+.demo-link:active {
+  opacity: 0.7;
+}
+
 /* ========================================
    NOTE TOOLTIP
    ======================================== */

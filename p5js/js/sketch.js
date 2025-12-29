@@ -11,6 +11,7 @@ let soundManager;
 let currentInstrument;
 let scaleVisualizer;
 let soundVisualizer;
+let sequencePlayer;
 
 // UI elements
 let instrumentSelect;
@@ -108,6 +109,9 @@ function setup() {
     musicMaker,
     scaleVisualizer
   );
+  
+  // Create sequence player for demos
+  sequencePlayer = new SequencePlayer(musicMaker, currentInstrument, scaleVisualizer);
   
   // Setup UI
   setupUI();
@@ -224,6 +228,23 @@ function setupUI() {
       helpPanel.classList.add('hidden');
     }
   });
+  
+  // Set up sequence player UI references
+  if (sequencePlayer) {
+    sequencePlayer.setUIRefs({
+      instrumentSelect,
+      noteSelect,
+      scaleSelect,
+      fifthsCheckbox,
+      chromaticColorsCheckbox
+    });
+  }
+  
+  // Demo link click handler
+  setupDemoLinks();
+  
+  // Check for URL demo parameter
+  checkURLDemo();
 }
 
 /**
@@ -609,5 +630,53 @@ function mousePressed() {
       currentInstrument.playNote(notePoked);
       musicMaker.addPlayingNote(notePoked);
     }
+  }
+}
+
+/**
+ * Setup demo link click handlers
+ */
+function setupDemoLinks() {
+  // Find all demo links in the document
+  const demoLinks = document.querySelectorAll('.demo-link[data-sequence]');
+  
+  demoLinks.forEach(link => {
+    link.addEventListener('click', async (e) => {
+      e.preventDefault();
+      
+      const sequenceStr = link.getAttribute('data-sequence');
+      if (!sequenceStr || !sequencePlayer) return;
+      
+      // Stop any current progression playback
+      stopProgressionPlayback();
+      
+      // Play the demo sequence
+      await sequencePlayer.play(sequenceStr);
+      
+      // Update UI elements to reflect new configuration
+      if (instrumentSelect && sequencePlayer.musicMaker) {
+        // UI is already updated by sequencePlayer.applyConfig via uiRefs
+      }
+    });
+  });
+}
+
+/**
+ * Check URL for demo parameter and play if found
+ */
+function checkURLDemo() {
+  const sequence = SequencePlayer.fromURL(window.location.search);
+  
+  if (sequence && sequencePlayer) {
+    // Wait a moment for sounds to load, then play
+    const checkReady = setInterval(() => {
+      if (isInitialized) {
+        clearInterval(checkReady);
+        sequencePlayer.play(sequence);
+      }
+    }, 100);
+    
+    // Give up after 10 seconds
+    setTimeout(() => clearInterval(checkReady), 10000);
   }
 }
