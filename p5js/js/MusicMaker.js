@@ -31,6 +31,16 @@ class MusicMaker {
     this.currentProgression = null;
     this.progressionStep = 0;
     
+    // Note frequencies (A4 = 440Hz, octave 4)
+    this.noteFrequencies = {
+      'A': 440.00, 'A#': 466.16, 'B': 493.88, 'C': 523.25,
+      'C#': 554.37, 'D': 587.33, 'D#': 622.25, 'E': 659.26,
+      'F': 698.46, 'F#': 739.99, 'G': 783.99, 'G#': 830.61
+    };
+    
+    // Scale degree names
+    this.scaleDegreeNames = ['1 (Root)', '2', '3', '4', '5', '6', '7'];
+    
     // Initialize all mappings
     this.setupNotesToNumbers();
     this.setupNumbersToNotes();
@@ -42,62 +52,166 @@ class MusicMaker {
   }
   
   /**
+   * Get frequency for a note (approximate, A4=440Hz basis)
+   */
+  getNoteFrequency(note) {
+    return this.noteFrequencies[note] || 440;
+  }
+  
+  /**
+   * Get scale degree of a note (1-based, or null if not in scale)
+   */
+  getScaleDegree(note) {
+    const noteNum = this.notesToNumbers[note];
+    const rootNum = this.notesToNumbers[this.currentRoot];
+    const interval = (noteNum - rootNum + 12) % 12;
+    
+    const degreeIndex = this.currentPattern.indexOf(interval);
+    if (degreeIndex === -1) {
+      return null; // Not in scale
+    }
+    return degreeIndex + 1;
+  }
+  
+  /**
+   * Get scale degree name (1=Root, 2, 3, etc.)
+   */
+  getScaleDegreeName(note) {
+    const degree = this.getScaleDegree(note);
+    if (degree === null) return null;
+    if (degree === 1) return '1 (Root)';
+    return degree.toString();
+  }
+  
+  /**
+   * Get full info about a note for tooltip display
+   */
+  getNoteInfo(note) {
+    const freq = this.getNoteFrequency(note);
+    const degree = this.getScaleDegree(note);
+    const degreeName = degree ? this.getScaleDegreeName(note) : 'Not in scale';
+    const inScale = this.currentScaleNotes[note] !== undefined;
+    
+    // Get display name (with unicode sharp)
+    const displayName = note.replace('#', '\u266F');
+    
+    return {
+      name: note,
+      displayName: displayName,
+      frequency: freq,
+      scaleDegree: degree,
+      scaleDegreeName: degreeName,
+      inScale: inScale
+    };
+  }
+  
+  /**
    * Setup common chord progressions
-   * Each progression is an array of [degree, quality] pairs
-   * Degrees are semitones from root, quality is chord suffix
+   * Each progression uses scale degrees (1-7) which are mode-aware
+   * The actual chord quality is derived from the current scale
    */
   setupChordProgressions() {
+    // Progressions use scale degrees 1-7
+    // Roman numerals are just labels - actual quality comes from the scale
     this.chordProgressions = {
-      'I-IV-V-I': [
-        { degree: 0, quality: '', name: 'I' },
-        { degree: 5, quality: '', name: 'IV' },
-        { degree: 7, quality: '', name: 'V' },
-        { degree: 0, quality: '', name: 'I' }
-      ],
-      'I-V-vi-IV': [
-        { degree: 0, quality: '', name: 'I' },
-        { degree: 7, quality: '', name: 'V' },
-        { degree: 9, quality: 'm', name: 'vi' },
-        { degree: 5, quality: '', name: 'IV' }
-      ],
-      'ii-V-I': [
-        { degree: 2, quality: 'm', name: 'ii' },
-        { degree: 7, quality: '', name: 'V' },
-        { degree: 0, quality: '', name: 'I' }
-      ],
-      'I-vi-IV-V': [
-        { degree: 0, quality: '', name: 'I' },
-        { degree: 9, quality: 'm', name: 'vi' },
-        { degree: 5, quality: '', name: 'IV' },
-        { degree: 7, quality: '', name: 'V' }
-      ],
-      'vi-IV-I-V': [
-        { degree: 9, quality: 'm', name: 'vi' },
-        { degree: 5, quality: '', name: 'IV' },
-        { degree: 0, quality: '', name: 'I' },
-        { degree: 7, quality: '', name: 'V' }
-      ],
-      'I-IV-vi-V': [
-        { degree: 0, quality: '', name: 'I' },
-        { degree: 5, quality: '', name: 'IV' },
-        { degree: 9, quality: 'm', name: 'vi' },
-        { degree: 7, quality: '', name: 'V' }
-      ],
-      '12 Bar Blues': [
-        { degree: 0, quality: '', name: 'I' },
-        { degree: 0, quality: '', name: 'I' },
-        { degree: 0, quality: '', name: 'I' },
-        { degree: 0, quality: '', name: 'I' },
-        { degree: 5, quality: '', name: 'IV' },
-        { degree: 5, quality: '', name: 'IV' },
-        { degree: 0, quality: '', name: 'I' },
-        { degree: 0, quality: '', name: 'I' },
-        { degree: 7, quality: '', name: 'V' },
-        { degree: 5, quality: '', name: 'IV' },
-        { degree: 0, quality: '', name: 'I' },
-        { degree: 7, quality: '', name: 'V' }
-      ]
+      '1-4-5-1': {
+        name: '1-4-5-1 (Classic)',
+        steps: [1, 4, 5, 1]
+      },
+      '1-5-6-4': {
+        name: '1-5-6-4 (Pop)',
+        steps: [1, 5, 6, 4]
+      },
+      '2-5-1': {
+        name: '2-5-1 (Jazz)',
+        steps: [2, 5, 1]
+      },
+      '1-6-4-5': {
+        name: '1-6-4-5 (50s)',
+        steps: [1, 6, 4, 5]
+      },
+      '6-4-1-5': {
+        name: '6-4-1-5',
+        steps: [6, 4, 1, 5]
+      },
+      '1-4-6-5': {
+        name: '1-4-6-5',
+        steps: [1, 4, 6, 5]
+      },
+      '12 Bar Blues': {
+        name: '12 Bar Blues',
+        steps: [1, 1, 1, 1, 4, 4, 1, 1, 5, 4, 1, 5]
+      }
     };
+  }
+  
+  /**
+   * Get the chord quality for a scale degree based on the current scale
+   * Returns: '', 'm', 'dim', or 'aug'
+   */
+  getChordQualityForDegree(degree) {
+    // degree is 1-7
+    if (this.currentPattern.length < 5) {
+      // Pentatonic scales - just use root, third, fifth from available notes
+      return '';  // Default to major-ish for pentatonic
+    }
+    
+    const rootIndex = degree - 1;
+    if (rootIndex < 0 || rootIndex >= this.currentPattern.length) {
+      return '';
+    }
+    
+    // Get the intervals from this scale degree
+    const rootInterval = this.currentPattern[rootIndex];
+    const thirdIndex = (rootIndex + 2) % this.currentPattern.length;
+    const fifthIndex = (rootIndex + 4) % this.currentPattern.length;
+    
+    // Calculate intervals relative to the chord root
+    let thirdInterval = this.currentPattern[thirdIndex] - rootInterval;
+    let fifthInterval = this.currentPattern[fifthIndex] - rootInterval;
+    
+    // Handle wrapping
+    if (thirdInterval < 0) thirdInterval += 12;
+    if (fifthInterval < 0) fifthInterval += 12;
+    
+    // Determine chord quality based on intervals
+    // Major third = 4 semitones, Minor third = 3 semitones
+    // Perfect fifth = 7 semitones, Diminished fifth = 6 semitones, Augmented fifth = 8 semitones
+    
+    const isMajorThird = thirdInterval === 4;
+    const isMinorThird = thirdInterval === 3;
+    const isPerfectFifth = fifthInterval === 7;
+    const isDiminishedFifth = fifthInterval === 6;
+    const isAugmentedFifth = fifthInterval === 8;
+    
+    if (isMinorThird && isDiminishedFifth) {
+      return 'dim';
+    } else if (isMajorThird && isAugmentedFifth) {
+      return 'aug';
+    } else if (isMinorThird) {
+      return 'm';
+    } else {
+      return '';  // Major
+    }
+  }
+  
+  /**
+   * Get the Roman numeral label for a chord (based on quality)
+   */
+  getRomanNumeral(degree, quality) {
+    const numerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
+    let numeral = numerals[degree - 1] || 'I';
+    
+    if (quality === 'm' || quality === 'dim') {
+      numeral = numeral.toLowerCase();
+    }
+    if (quality === 'dim') {
+      numeral += '°';
+    } else if (quality === 'aug') {
+      numeral += '+';
+    }
+    
+    return numeral;
   }
   
   /**
@@ -122,7 +236,7 @@ class MusicMaker {
   }
   
   /**
-   * Get current progression chord info
+   * Get current progression chord info (mode-aware)
    */
   getCurrentProgressionChord() {
     if (!this.currentProgression) return null;
@@ -130,23 +244,52 @@ class MusicMaker {
     const prog = this.chordProgressions[this.currentProgression];
     if (!prog) return null;
     
-    const step = prog[this.progressionStep];
-    const rootNum = this.notesToNumbers[this.currentRoot];
-    const chordRootNum = (rootNum + step.degree) % 12;
-    const chordRoot = this.numbersToNotes[chordRootNum];
+    const scaleDegree = prog.steps[this.progressionStep];
+    
+    // Get the note for this scale degree
+    const chordRoot = this.getNoteForScaleDegree(scaleDegree);
+    if (!chordRoot) return null;
+    
+    // Get the chord quality based on the current scale
+    const quality = this.getChordQualityForDegree(scaleDegree);
+    
+    // Get Roman numeral representation
+    const romanNumeral = this.getRomanNumeral(scaleDegree, quality);
+    
+    // Quality display symbol
+    let qualitySymbol = '';
+    if (quality === 'm') qualitySymbol = 'm';
+    else if (quality === 'dim') qualitySymbol = '°';
+    else if (quality === 'aug') qualitySymbol = '+';
     
     return {
       root: chordRoot,
-      quality: step.quality,
-      name: step.name,
+      quality: quality,
+      scaleDegree: scaleDegree,
+      romanNumeral: romanNumeral,
       step: this.progressionStep + 1,
-      total: prog.length,
-      displayName: `${chordRoot}${step.quality} (${step.name})`
+      total: prog.steps.length,
+      displayName: `${chordRoot}${qualitySymbol} (${romanNumeral})`
     };
   }
   
   /**
-   * Get notes for current progression chord
+   * Get the note name for a scale degree (1-7)
+   */
+  getNoteForScaleDegree(degree) {
+    if (degree < 1 || degree > this.currentPattern.length) {
+      // For pentatonic scales with fewer notes, wrap around
+      degree = ((degree - 1) % this.currentPattern.length) + 1;
+    }
+    
+    const rootNum = this.notesToNumbers[this.currentRoot];
+    const interval = this.currentPattern[degree - 1];
+    const noteNum = (rootNum + interval) % 12;
+    return this.numbersToNotes[noteNum];
+  }
+  
+  /**
+   * Get notes for current progression chord (mode-aware)
    */
   getCurrentProgressionNotes() {
     const chord = this.getCurrentProgressionChord();
@@ -156,10 +299,10 @@ class MusicMaker {
     let intervals;
     if (chord.quality === 'm') {
       intervals = [0, 3, 7];  // Minor triad
-    } else if (chord.quality === '7') {
-      intervals = [0, 4, 7, 10];  // Dominant 7th
     } else if (chord.quality === 'dim') {
       intervals = [0, 3, 6];  // Diminished
+    } else if (chord.quality === 'aug') {
+      intervals = [0, 4, 8];  // Augmented
     } else {
       intervals = [0, 4, 7];  // Major triad
     }
@@ -175,7 +318,7 @@ class MusicMaker {
     if (!this.currentProgression) return null;
     
     const prog = this.chordProgressions[this.currentProgression];
-    this.progressionStep = (this.progressionStep + 1) % prog.length;
+    this.progressionStep = (this.progressionStep + 1) % prog.steps.length;
     return this.getCurrentProgressionChord();
   }
   
@@ -186,7 +329,7 @@ class MusicMaker {
     if (!this.currentProgression) return null;
     
     const prog = this.chordProgressions[this.currentProgression];
-    this.progressionStep = (this.progressionStep - 1 + prog.length) % prog.length;
+    this.progressionStep = (this.progressionStep - 1 + prog.steps.length) % prog.steps.length;
     return this.getCurrentProgressionChord();
   }
 

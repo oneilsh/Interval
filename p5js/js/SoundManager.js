@@ -22,8 +22,7 @@ class SoundManager {
       'Equal Tempered',
       'Well Tempered', 
       'Carlos Super Just',
-      'Pythagorean',
-      'Grand Piano'
+      'Pythagorean'
     ];
     // Base path for sound files
     this.basePath = 'assets/sounds/';

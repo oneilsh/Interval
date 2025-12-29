@@ -10,15 +10,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.sound.min.js"></script>
   
   <!-- Custom styles -->
-  <link rel="stylesheet" href="css/style.css?v=53">
+  <link rel="stylesheet" href="css/style.css?v=65">
   
   <!-- Application modules -->
-  <script src="js/MusicMaker.js?v=52"></script>
-  <script src="js/SoundManager.js?v=52"></script>
-  <script src="js/Instrument.js?v=52"></script>
-  <script src="js/ScaleVisualizer.js?v=52"></script>
-  <script src="js/SoundVisualizer.js?v=52"></script>
-  <script src="js/sketch.js?v=52"></script>
+  <script src="js/MusicMaker.js?v=63"></script>
+  <script src="js/SoundManager.js?v=63"></script>
+  <script src="js/Instrument.js?v=63"></script>
+  <script src="js/ScaleVisualizer.js?v=63"></script>
+  <script src="js/SoundVisualizer.js?v=63"></script>
+  <script src="js/sketch.js?v=63"></script>
 </head>
 <body>
   <div id="app-container">
@@ -34,18 +34,17 @@
       <div class="panel-content">
         <div class="control-group">
           <label for="instrument-select">Temperament</label>
-          <select id="instrument-select">
+          <select id="instrument-select" title="Choose a tuning system. Equal Tempered is modern standard; others have historical character.">
             <option value="Equal Tempered" selected>Equal Tempered</option>
             <option value="Well Tempered">Well Tempered</option>
             <option value="Carlos Super Just">Carlos Super Just</option>
             <option value="Pythagorean">Pythagorean</option>
-            <option value="Grand Piano">Grand Piano</option>
           </select>
         </div>
         
         <div class="control-group">
           <label for="note-select">Root</label>
-          <select id="note-select">
+          <select id="note-select" title="Select the root note for the scale. All other notes are relative to this.">
             <option value="A">A</option>
             <option value="A#">A♯</option>
             <option value="B">B</option>
@@ -63,7 +62,7 @@
         
         <div class="control-group">
           <label for="scale-select">Scale</label>
-          <select id="scale-select">
+          <select id="scale-select" title="Choose a scale or mode. Notes in the scale appear bright; others are dimmed.">
             <optgroup label="Scales">
               <option value="Major" selected>Major</option>
               <option value="Minor">Minor</option>
@@ -85,24 +84,24 @@
         
         <div class="control-group">
           <label for="progression-select">Progression</label>
-          <select id="progression-select">
+          <select id="progression-select" title="Chord progressions adapt to the current scale - qualities change based on mode.">
             <option value="None">None</option>
-            <option value="I-IV-V-I">I-IV-V-I</option>
-            <option value="I-V-vi-IV">I-V-vi-IV</option>
-            <option value="ii-V-I">ii-V-I</option>
-            <option value="I-vi-IV-V">I-vi-IV-V</option>
-            <option value="vi-IV-I-V">vi-IV-I-V</option>
-            <option value="I-IV-vi-V">I-IV-vi-V</option>
+            <option value="1-4-5-1">1-4-5-1 (Classic)</option>
+            <option value="1-5-6-4">1-5-6-4 (Pop)</option>
+            <option value="2-5-1">2-5-1 (Jazz)</option>
+            <option value="1-6-4-5">1-6-4-5 (50s)</option>
+            <option value="6-4-1-5">6-4-1-5</option>
+            <option value="1-4-6-5">1-4-6-5</option>
             <option value="12 Bar Blues">12 Bar Blues</option>
           </select>
         </div>
         
         <div class="progression-controls hidden" id="progression-controls">
           <div class="prog-row">
-            <button id="play-prog-btn" class="prog-btn" title="Play/Stop">▶</button>
-            <span id="progression-display" class="prog-display">-</span>
+            <button id="play-prog-btn" class="prog-btn" title="Play or stop the chord progression">▶</button>
+            <span id="progression-display" class="prog-display" title="Current chord in the progression">-</span>
           </div>
-          <select id="speed-select" class="speed-select" title="Speed">
+          <select id="speed-select" class="speed-select" title="Tempo - time between chord changes">
             <option value="2000">Slow</option>
             <option value="1000" selected>Medium</option>
             <option value="500">Fast</option>
@@ -111,26 +110,29 @@
         
         <div class="divider"></div>
         
-        <label class="checkbox-inline">
+        <label class="checkbox-inline" title="Arrange notes by their position in the circle of fifths instead of chromatically">
           <input type="checkbox" id="fifths-checkbox">
           <span>Circle of Fifths</span>
         </label>
         
-        <label class="checkbox-inline">
+        <label class="checkbox-inline" title="Color notes by frequency (low to high) instead of fifth relationships">
           <input type="checkbox" id="chromatic-colors-checkbox">
           <span>Chromatic Colors</span>
         </label>
         
-        <label class="checkbox-inline">
+        <label class="checkbox-inline" title="Show a spectrum visualizer around the wheel that reacts to playing notes">
           <input type="checkbox" id="visualizer-checkbox">
           <span>Spectrum</span>
         </label>
         
         <div class="divider"></div>
         
-        <button id="help-btn" class="action-btn help">?</button>
+        <button id="help-btn" class="action-btn help" title="Show help and information">?</button>
       </div>
     </div>
+    
+    <!-- Note tooltip -->
+    <div id="note-tooltip" class="hidden"></div>
     
     <!-- Help modal -->
     <div id="help-panel" class="hidden">
@@ -142,60 +144,72 @@
         <div class="help-content">
           <p class="credit">Copyright Shawn T. O'Neil, 2013 | p5.js port 2024</p>
           
-          <h3>Playing Notes</h3>
-          <p>MusicWheel provides two keyboard layouts for playing notes:</p>
-          <ul>
-            <li><kbd>1</kbd> through <kbd>=</kbd> keys play all 12 chromatic notes starting from the selected root note</li>
-            <li><kbd>q</kbd> through <kbd>]</kbd> keys play only the notes in the currently selected scale</li>
-          </ul>
-          <p>You can also click on individual notes in the wheel to hear them. Hold multiple keys to play chords. The app will detect common chord types (major, minor, diminished, augmented, seventh chords) and display them in the center of the wheel.</p>
+          <h3>What is MusicWheel?</h3>
+          <p>MusicWheel is an interactive tool for exploring music theory. It visualizes notes, scales, and chords on a circular display, and lets you hear how different tuning systems affect the sound of music.</p>
           
-          <h3>The Wheel Visualization</h3>
-          <p>Notes are arranged around a circle and colored by their relationships in the circle of fifths. Notes in the current scale are shown at full brightness, while notes outside the scale appear dimmed.</p>
-          <p>Toggle <strong>Circle of Fifths</strong> to rearrange notes by their fifth relationships rather than chromatically. This reveals harmonic patterns more clearly.</p>
-          <p>Toggle <strong>Chromatic Colors</strong> to color notes by frequency (low to high) rather than by fifth relationships.</p>
-          <p>A small dot on the wheel indicates the relative major or minor key (e.g., for C Major, the dot shows A Minor).</p>
+          <h3>Playing Notes</h3>
+          <p>There are two ways to play notes:</p>
+          <ul>
+            <li><strong>Number row</strong> (<kbd>1</kbd> through <kbd>=</kbd>): Plays all 12 notes in Western music, starting from your chosen root note. These are the "chromatic" notes - every key on a piano, both white and black.</li>
+            <li><strong>Letter row</strong> (<kbd>q</kbd> through <kbd>]</kbd>): Plays only the notes in your selected scale (usually 7 notes). This makes it easy to improvise without hitting "wrong" notes.</li>
+          </ul>
+          <p>You can also click notes on the wheel. When you play multiple notes together, the app identifies the <strong>chord</strong> (a group of notes that sound good together) and displays its name in the center. Common chords include major (happy/bright), minor (sad/dark), and seventh chords (jazzy/complex).</p>
+          
+          <h3>The Wheel</h3>
+          <p>The wheel shows all 12 notes arranged in a circle. Bright notes are "in the scale" - they belong to your selected key and will sound harmonious together. Dimmed notes are "outside the scale" - they can add tension or color but may clash.</p>
+          <p><strong>Circle of Fifths:</strong> This toggle changes how notes are arranged. Normally notes go up by half-steps (C, C#, D, D#...). The Circle of Fifths arranges them by "fifths" instead (C, G, D, A...). A fifth is the interval from "do" to "sol" - one of the most consonant sounds in music. This arrangement reveals why certain chords sound good together: neighbors on the circle share many notes.</p>
+          <p><strong>Chromatic Colors:</strong> Changes whether colors represent pitch (low=red to high=violet) or position in the circle of fifths.</p>
+          <p>The small dot shows the <strong>relative major/minor</strong>. Every major key has a "relative minor" that shares all the same notes but starts on a different root. For example, C Major and A Minor use the same seven notes (all white keys on a piano).</p>
           
           <h3>Scales and Modes</h3>
-          <p>The app includes common scales (Major, Minor, Blues, Pentatonic) and all seven modes of the major scale:</p>
+          <p>A <strong>scale</strong> is a collection of notes that sound good together. The most common are:</p>
           <ul>
-            <li><strong>Ionian</strong> - Same as the major scale</li>
-            <li><strong>Dorian</strong> - Minor scale with raised 6th</li>
-            <li><strong>Phrygian</strong> - Minor scale with lowered 2nd</li>
-            <li><strong>Lydian</strong> - Major scale with raised 4th</li>
-            <li><strong>Mixolydian</strong> - Major scale with lowered 7th</li>
-            <li><strong>Aeolian</strong> - Same as the natural minor scale</li>
-            <li><strong>Locrian</strong> - Diminished scale</li>
+            <li><strong>Major</strong> - Bright and happy (think "Happy Birthday")</li>
+            <li><strong>Minor</strong> - Dark and melancholy (think minor-key movie themes)</li>
+            <li><strong>Pentatonic</strong> - A 5-note scale common in rock, blues, and folk music worldwide</li>
+            <li><strong>Blues</strong> - Pentatonic plus one extra "blue note" that gives it that bluesy sound</li>
           </ul>
-          <p>When a mode is selected, the app displays which major key contains the same notes (for example, "D Dorian" uses the same notes as "C Major").</p>
+          <p><strong>Modes</strong> are variations of the major scale, each starting on a different note. They all use the same seven notes but have different "home bases," creating distinct moods:</p>
+          <ul>
+            <li><strong>Ionian</strong> - The standard major scale</li>
+            <li><strong>Dorian</strong> - Minor but with a brighter 6th; common in jazz and Celtic music</li>
+            <li><strong>Phrygian</strong> - Minor with a dark, Spanish/Middle Eastern flavor</li>
+            <li><strong>Lydian</strong> - Major but dreamy and floating; the "Simpsons theme" sound</li>
+            <li><strong>Mixolydian</strong> - Major but with a bluesy 7th; common in rock</li>
+            <li><strong>Aeolian</strong> - The natural minor scale</li>
+            <li><strong>Locrian</strong> - Unstable and tense; rarely used as a "home" scale</li>
+          </ul>
+          <p>The app shows which major key shares the same notes. For instance, D Dorian uses the same notes as C Major - it's just "C Major starting on D."</p>
           
           <h3>Chord Progressions</h3>
-          <p>Select a common chord progression from the dropdown to explore harmonic movement. Available progressions include:</p>
+          <p>A <strong>chord progression</strong> is a sequence of chords. Most songs use the same few progressions. The numbers (1, 4, 5, etc.) refer to scale degrees - if you're in C Major, 1=C, 4=F, 5=G.</p>
+          <p>Progressions are <strong>mode-aware</strong>: the same "1-4-5" pattern produces major chords in a major key but minor chords in a minor key. Try switching between C Major and C Minor while a progression plays to hear the difference.</p>
           <ul>
-            <li><strong>I-IV-V-I</strong> - Classic progression</li>
-            <li><strong>I-V-vi-IV</strong> - Popular in modern pop music</li>
-            <li><strong>ii-V-I</strong> - Jazz standard turnaround</li>
-            <li><strong>12 Bar Blues</strong> - Traditional blues form</li>
+            <li><strong>1-4-5-1</strong> - The foundation of rock, country, and blues</li>
+            <li><strong>1-5-6-4</strong> - The "pop progression" used in hundreds of hit songs</li>
+            <li><strong>2-5-1</strong> - The jazz turnaround; creates strong resolution</li>
+            <li><strong>12 Bar Blues</strong> - The classic blues structure</li>
           </ul>
-          <p>Use the play button to auto-play through the progression, or step through manually. Adjust the speed with the dropdown selector.</p>
           
-          <h3>Temperaments</h3>
-          <p>Different tuning systems (temperaments) change the exact frequencies of notes, creating different sonic characters:</p>
-          <ul>
-            <li><strong>Equal Tempered</strong> - Modern standard tuning. All semitones are equal, so every key sounds identical. This is used in virtually all contemporary music.</li>
-            <li><strong>Well Tempered</strong> - Historical tuning system from the Baroque era. Each key has a unique character and color, with some keys sounding "brighter" or "darker" than others.</li>
-            <li><strong>Pythagorean</strong> - Ancient tuning based on perfect fifths (3:2 ratio). Produces very pure-sounding fifths but has one extremely dissonant "wolf fifth" interval.</li>
-            <li><strong>Carlos Super Just</strong> - Modern just intonation system designed by Wendy Carlos, optimizing for pure intervals in multiple keys.</li>
-            <li><strong>Grand Piano</strong> - Sampled acoustic grand piano with natural harmonic richness.</li>
-          </ul>
+          <h3>Temperaments (Tuning Systems)</h3>
+          <p>Here's a secret: the notes on a piano are slightly "out of tune" - on purpose! A <strong>temperament</strong> is a system for tuning notes. The challenge is mathematical: you can't have perfectly pure fifths (3:2 frequency ratio) AND perfectly pure thirds (5:4 frequency ratio) AND be able to play in any key. Different temperaments make different trade-offs.</p>
+          
+          <p><strong>Important:</strong> Except for Equal Tempered, all temperaments are "keyed" - they're designed around a specific root note. The samples in this app are tuned relative to C, so C Major represents the "home" key where the tuning is optimized. When you select a different root note, the temperament characteristics shift accordingly - you're essentially playing in a key that's "farther" or "closer" to the tuning's home base.</p>
+          
+          <p><strong>Equal Tempered</strong> (Modern Standard)</p>
+          <p>The one temperament that isn't keyed. Every half-step is exactly the same size, so every key sounds identical and you can transpose freely. The trade-off: no interval is perfectly pure (e.g. a perfect fifth should be 3:2 = 1.5, but in equal temperament it's ~1.498). This tiny compromise in every interval is why modern instruments can play in any key. This is how virtually all contemporary instruments are tuned.</p>
+          
+          <p><strong>Well Tempered</strong> (Baroque Era)</p>
+          <p>Notes are adjusted so that all keys are playable, but each key retains its own "color." Keys close to C (few sharps/flats) sound purer and brighter because the tuning favors them. Keys far from C (like F# Major with six sharps) accumulate small tuning compromises that make them sound more tense and darker. Bach wrote "The Well-Tempered Clavier" specifically to showcase how each of the 24 keys has its own character. Try playing a C Major chord, then an F# Major chord - you'll hear C sound clean while F# has more "edge."</p>
+          
+          <p><strong>Pythagorean</strong> (Ancient Greek)</p>
+          <p>Built entirely by stacking pure fifths (3:2 ratio) starting from C. Fifths sound incredibly pure, but here's the problem: if you stack 12 perfect fifths (C→G→D→A→E→B→F#→C#→G#→D#→A#→F→C), you should return to C - but mathematically, you land slightly sharp. This leftover error (called the "Pythagorean comma") has to go somewhere, creating one horribly out-of-tune interval called the <strong>"wolf fifth"</strong> - traditionally placed between G# and Eb where it was least likely to be needed. To hear it, play G# and D# together - instead of a pure fifth, you get a dissonant howl!</p>
+          
+          <p><strong>Carlos Super Just</strong></p>
+          <p>Created by electronic music pioneer Wendy Carlos for her groundbreaking synthesizer albums. This is a form of "just intonation" - tuning based on pure mathematical ratios. Chords in C and nearby keys sound incredibly pure and beatless because their intervals are exact ratios (like 5:4 for major thirds). But this purity comes at a cost: keys far from C (like F# or Db) sound noticeably out of tune. Try comparing a C Major triad (pure, locked-in) to an F# Major triad (buzzy, restless) to hear the dramatic difference.</p>
           
           <h3>Spectrum Visualizer</h3>
-          <p>Toggle <strong>Spectrum</strong> to see a real-time frequency visualization that wraps around the outside of the wheel. The visualizer combines two elements:</p>
-          <ul>
-            <li>Overall frequency spectrum from FFT analysis</li>
-            <li>Direct tracking of which notes are currently playing</li>
-          </ul>
-          <p>Bars are positioned to match the note locations on the wheel and are colored using the same scheme. Active notes show brighter colors and taller bars.</p>
+          <p>Toggle <strong>Spectrum</strong> to see a visualization around the wheel that responds to the sounds being played. It combines frequency analysis with direct note tracking for a fun (if not scientifically precise) display.</p>
         </div>
       </div>
     </div>

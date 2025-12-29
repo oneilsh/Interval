@@ -38,6 +38,10 @@ let isInitialized = false;
 let canvasParent;
 let isLoadingInstrument = false;
 
+// Tooltip
+let noteTooltip;
+let lastHoveredNote = null;
+
 // Font for WEBGL text rendering
 let mainFont;
 
@@ -150,6 +154,7 @@ function setupUI() {
   loadingOverlay = document.getElementById('loading-overlay');
   togglePanelBtn = document.getElementById('toggle-panel');
   controlsPanel = document.getElementById('controls-panel');
+  noteTooltip = document.getElementById('note-tooltip');
   
   // Panel toggle
   togglePanelBtn.addEventListener('click', () => {
@@ -244,6 +249,12 @@ function onScaleChange() {
   const scaleType = scaleSelect.value;
   musicMaker.setScale(rootNote, scaleType);
   console.log(`Changed to ${rootNote} ${scaleType}`);
+  
+  // Update progression display if active (chords change with scale)
+  if (musicMaker.currentProgression) {
+    const chord = musicMaker.getCurrentProgressionChord();
+    updateProgressionDisplay(chord);
+  }
 }
 
 
@@ -252,7 +263,7 @@ function onScaleChange() {
  */
 function updateProgressionDisplay(chord) {
   if (chord) {
-    progressionDisplay.textContent = `${chord.step}/${chord.total}: ${chord.name}`;
+    progressionDisplay.textContent = `${chord.step}/${chord.total}: ${chord.displayName}`;
     progressionControls.classList.remove('hidden');
   } else {
     progressionDisplay.textContent = '-';
@@ -482,6 +493,96 @@ function keyReleased() {
       currentInstrument.stopNote(note);
     }
     musicMaker.releasePlayingNote(note);
+  }
+}
+
+/**
+ * Mouse moved handler - show note tooltip on hover
+ */
+function mouseMoved() {
+  if (!isInitialized || !scaleVisualizer || !noteTooltip) return;
+  
+  // Check if mouse is on canvas
+  if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) {
+    hideNoteTooltip();
+    return;
+  }
+  
+  // Convert screen coordinates to WEBGL coordinates (centered at 0,0)
+  const webglX = mouseX - width / 2;
+  const webglY = mouseY - height / 2;
+  
+  const hoveredNote = scaleVisualizer.getNote(webglX, webglY);
+  
+  if (hoveredNote !== null) {
+    if (hoveredNote !== lastHoveredNote) {
+      lastHoveredNote = hoveredNote;
+      showNoteTooltip(hoveredNote, mouseX, mouseY);
+    } else {
+      // Just update position
+      updateTooltipPosition(mouseX, mouseY);
+    }
+  } else {
+    hideNoteTooltip();
+    lastHoveredNote = null;
+  }
+}
+
+/**
+ * Show tooltip for a note
+ */
+function showNoteTooltip(note, x, y) {
+  const info = musicMaker.getNoteInfo(note);
+  
+  let html = `<div class="note-name">${info.displayName}</div>`;
+  // html += `<div class="note-freq">${info.frequency.toFixed(1)} Hz</div>`;
+  
+  if (info.inScale) {
+    html += `<div class="note-degree">Scale degree: ${info.scaleDegreeName}</div>`;
+  } else {
+    html += `<div class="not-in-scale">Not in current scale</div>`;
+  }
+  
+  noteTooltip.innerHTML = html;
+  noteTooltip.classList.remove('hidden');
+  updateTooltipPosition(x, y);
+}
+
+/**
+ * Update tooltip position
+ */
+function updateTooltipPosition(x, y) {
+  // Position tooltip offset from cursor
+  let tooltipX = x + 15;
+  let tooltipY = y + 15;
+  
+  // Get canvas position
+  const canvas = document.querySelector('canvas');
+  const canvasRect = canvas.getBoundingClientRect();
+  
+  // Adjust position to be absolute
+  tooltipX += canvasRect.left;
+  tooltipY += canvasRect.top;
+  
+  // Keep tooltip on screen
+  const tooltipRect = noteTooltip.getBoundingClientRect();
+  if (tooltipX + tooltipRect.width > window.innerWidth - 10) {
+    tooltipX = x - tooltipRect.width - 15 + canvasRect.left;
+  }
+  if (tooltipY + tooltipRect.height > window.innerHeight - 10) {
+    tooltipY = y - tooltipRect.height - 15 + canvasRect.top;
+  }
+  
+  noteTooltip.style.left = tooltipX + 'px';
+  noteTooltip.style.top = tooltipY + 'px';
+}
+
+/**
+ * Hide note tooltip
+ */
+function hideNoteTooltip() {
+  if (noteTooltip) {
+    noteTooltip.classList.add('hidden');
   }
 }
 

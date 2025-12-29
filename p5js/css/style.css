@@ -112,7 +112,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 160px;
+  width: 190px;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
@@ -434,6 +434,55 @@ select:focus {
 .help-content li {
   margin-bottom: 6px;
   line-height: 1.5;
+}
+
+/* ========================================
+   NOTE TOOLTIP
+   ======================================== */
+
+#note-tooltip {
+  position: fixed;
+  z-index: 1000;
+  background: var(--bg-panel);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px 14px;
+  box-shadow: var(--shadow);
+  pointer-events: none;
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 200px;
+  transition: opacity 0.15s ease;
+}
+
+#note-tooltip.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+#note-tooltip .note-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+#note-tooltip .note-freq {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+#note-tooltip .note-degree {
+  color: var(--accent-primary);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+#note-tooltip .not-in-scale {
+  color: var(--text-muted);
+  font-style: italic;
 }
 
 /* ========================================
