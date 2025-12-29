@@ -43,6 +43,10 @@ let isLoadingInstrument = false;
 let noteTooltip;
 let lastHoveredNote = null;
 
+// Help status bar
+let helpStatusBar;
+let isHelpVisible = false;
+
 // Font for WEBGL text rendering
 let mainFont;
 
@@ -159,6 +163,7 @@ function setupUI() {
   togglePanelBtn = document.getElementById('toggle-panel');
   controlsPanel = document.getElementById('controls-panel');
   noteTooltip = document.getElementById('note-tooltip');
+  helpStatusBar = document.getElementById('help-status-bar');
   
   // Panel toggle
   togglePanelBtn.addEventListener('click', () => {
@@ -216,16 +221,19 @@ function setupUI() {
   // Help panel toggle
   helpBtn.addEventListener('click', () => {
     helpPanel.classList.remove('hidden');
+    showHelpStatusBar();
   });
   
   closeHelpBtn.addEventListener('click', () => {
     helpPanel.classList.add('hidden');
+    hideHelpStatusBar();
   });
   
   // Close help on background click
   helpPanel.addEventListener('click', (e) => {
     if (e.target === helpPanel) {
       helpPanel.classList.add('hidden');
+      hideHelpStatusBar();
     }
   });
   
@@ -395,6 +403,11 @@ function draw() {
   if (soundVisualizer) {
     soundVisualizer.draw();
   }
+  
+  // Update status bar if help is visible
+  if (isHelpVisible) {
+    updateHelpStatusBar();
+  }
 }
 
 /**
@@ -461,6 +474,7 @@ function keyPressed() {
   // Escape to close help
   else if (keyCode === ESCAPE) {
     helpPanel.classList.add('hidden');
+    hideHelpStatusBar();
     return;
   }
   
@@ -678,5 +692,64 @@ function checkURLDemo() {
     
     // Give up after 10 seconds
     setTimeout(() => clearInterval(checkReady), 10000);
+  }
+}
+
+/**
+ * Show the help status bar and start updating it
+ */
+function showHelpStatusBar() {
+  isHelpVisible = true;
+  if (helpStatusBar) {
+    helpStatusBar.classList.add('visible');
+    updateHelpStatusBar();
+  }
+}
+
+/**
+ * Hide the help status bar
+ */
+function hideHelpStatusBar() {
+  isHelpVisible = false;
+  if (helpStatusBar) {
+    helpStatusBar.classList.remove('visible');
+  }
+}
+
+/**
+ * Update the help status bar with current config and chord info
+ */
+function updateHelpStatusBar() {
+  if (!helpStatusBar || !isHelpVisible || !musicMaker) return;
+  
+  // Get current configuration
+  const temperament = currentInstrument ? currentInstrument.getName() : 'Equal Tempered';
+  const root = musicMaker.getCurrentRoot();
+  const scale = musicMaker.getCurrentScaleType();
+  
+  const configEl = helpStatusBar.querySelector('.status-config');
+  if (configEl) {
+    configEl.textContent = `${temperament} | ${root} ${scale}`;
+  }
+  
+  // Get currently playing chord info
+  const chordEl = helpStatusBar.querySelector('.status-chord');
+  if (chordEl) {
+    const playingNotes = musicMaker.getCurrentlyPlayingNotes();
+    const noteNames = Object.keys(playingNotes);
+    
+    if (noteNames.length === 0) {
+      chordEl.textContent = 'No notes playing';
+    } else {
+      // Get detected chords
+      const chords = musicMaker.getCurrentlyPlayingChordsFromNotes(playingNotes);
+      const chordNames = Object.keys(chords).filter(c => !c.endsWith('f')); // Filter out fifths
+      
+      if (chordNames.length > 0) {
+        chordEl.textContent = `${chordNames[0]} (${noteNames.join(', ')})`;
+      } else {
+        chordEl.textContent = noteNames.join(', ');
+      }
+    }
   }
 }
