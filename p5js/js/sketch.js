@@ -17,6 +17,8 @@ let instrumentSelect;
 let noteSelect;
 let scaleSelect;
 let fifthsCheckbox;
+let chromaticColorsCheckbox;
+let visualizerCheckbox;
 let playSelectedBtn;
 let helpBtn;
 let closeHelpBtn;
@@ -90,15 +92,11 @@ function setup() {
   scaleVisualizer = new ScaleVisualizer(musicMaker, currentInstrument);
   scaleVisualizer.updateDimensions(w, h);
   
-  // SoundVisualizer position in WEBGL coordinates (bottom-right)
+  // SoundVisualizer - radial visualization around the wheel
   soundVisualizer = new SoundVisualizer(
     currentInstrument,
     musicMaker,
-    scaleVisualizer,
-    w / 2 - 210,    // Right side
-    h / 2 - 190,    // Bottom
-    185,
-    100
+    scaleVisualizer
   );
   
   // Setup UI
@@ -133,6 +131,8 @@ function setupUI() {
   noteSelect = document.getElementById('note-select');
   scaleSelect = document.getElementById('scale-select');
   fifthsCheckbox = document.getElementById('fifths-checkbox');
+  chromaticColorsCheckbox = document.getElementById('chromatic-colors-checkbox');
+  visualizerCheckbox = document.getElementById('visualizer-checkbox');
   playSelectedBtn = document.getElementById('play-selected-btn');
   helpBtn = document.getElementById('help-btn');
   closeHelpBtn = document.getElementById('close-help-btn');
@@ -154,6 +154,16 @@ function setupUI() {
   // Circle of fifths checkbox
   fifthsCheckbox.addEventListener('change', (e) => {
     scaleVisualizer.setByFifths(e.target.checked);
+  });
+  
+  // Chromatic colors checkbox
+  chromaticColorsCheckbox.addEventListener('change', (e) => {
+    scaleVisualizer.setChromaticColors(e.target.checked);
+  });
+  
+  // Visualizer checkbox
+  visualizerCheckbox.addEventListener('change', (e) => {
+    soundVisualizer.setShow(e.target.checked);
   });
   
   // Play selected button
@@ -257,10 +267,7 @@ function windowResized() {
       scaleVisualizer.updateDimensions(w, h);
     }
     
-    if (soundVisualizer) {
-      // WEBGL coordinates for bottom-right position
-      soundVisualizer.setPosition(w / 2 - 210, h / 2 - 190, 185, 100);
-    }
+    // SoundVisualizer automatically uses ScaleVisualizer's dimensions
   }
 }
 

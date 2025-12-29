@@ -10,14 +10,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.sound.min.js"></script>
   
   <!-- Custom styles -->
-  <link rel="stylesheet" href="css/style.css?v=4">
+  <link rel="stylesheet" href="css/style.css?v=5">
   
   <!-- Application modules -->
-  <script src="js/MusicMaker.js?v=7"></script>
-  <script src="js/SoundManager.js?v=7"></script>
-  <script src="js/Instrument.js?v=7"></script>
-  <script src="js/ScaleVisualizer.js?v=9"></script>
-  <script src="js/sketch.js?v=7"></script>
+  <script src="js/MusicMaker.js?v=20"></script>
+  <script src="js/SoundManager.js?v=20"></script>
+  <script src="js/Instrument.js?v=20"></script>
+  <script src="js/ScaleVisualizer.js?v=32"></script>
+  <script src="js/SoundVisualizer.js?v=34"></script>
+  <script src="js/sketch.js?v=32"></script>
 </head>
 <body>
   <div id="app-container">
@@ -79,6 +80,16 @@
             <span>Circle of Fifths</span>
           </label>
           
+          <label class="checkbox-inline">
+            <input type="checkbox" id="chromatic-colors-checkbox">
+            <span>Chromatic Colors</span>
+          </label>
+          
+          <label class="checkbox-inline">
+            <input type="checkbox" id="visualizer-checkbox">
+            <span>Spectrum</span>
+          </label>
+          
           <button id="play-selected-btn" class="action-btn">▶ Play Selected</button>
           
           <button id="help-btn" class="action-btn help">?</button>
@@ -111,8 +122,8 @@
           <strong>Pythagorean:</strong> Pure fifths, has a harsh "wolf interval".<br>
           <strong>Carlos Super Just:</strong> Optimized pure intervals.</p>
           
-          <h3>✨ Secret</h3>
-          <p>Play C augmented (C+E+G♯) to unlock a visualizer!</p>
+          <h3>📊 Spectrum</h3>
+          <p>Toggle <strong>Spectrum</strong> to see a frequency visualization colored by note relationships.</p>
         </div>
       </div>
     </div>

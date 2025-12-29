@@ -24,6 +24,9 @@ class ScaleVisualizer {
     // Display mode
     this.byFifths = false;
     
+    // Color mode: true = chromatic (by frequency), false = fifths relationship
+    this.chromaticColors = false;
+    
     // Note colors (using HSB, will convert to values)
     this.noteColors = {};
     // Note alphas (opacity for scale highlighting)
@@ -63,7 +66,7 @@ class ScaleVisualizer {
   setupNoteColorsAlphas() {
     // Colors based on circle of fifths relationship (HSB)
     // Using hue values that create nice color distribution
-    this.noteColors = {
+    this.fifthsColors = {
       'C': [0, 155, 255],      // Red family
       'C#': [210, 155, 255],   // Blue family
       'D': [60, 155, 255],     // Yellow family
@@ -77,6 +80,26 @@ class ScaleVisualizer {
       'A#': [300, 155, 255],   // Magenta
       'B': [150, 155, 255]     // Teal
     };
+    
+    // Colors based on chromatic order (low to high frequency)
+    // Hue wraps around the color wheel: A=0° through G#=330°
+    this.chromaticColorsMap = {
+      'A': [0, 155, 255],      // Red (lowest)
+      'A#': [30, 155, 255],    // Orange
+      'B': [60, 155, 255],     // Yellow
+      'C': [90, 155, 255],     // Yellow-green
+      'C#': [120, 155, 255],   // Green
+      'D': [150, 155, 255],    // Teal
+      'D#': [180, 155, 255],   // Cyan
+      'E': [210, 155, 255],    // Light blue
+      'F': [240, 155, 255],    // Blue
+      'F#': [270, 155, 255],   // Purple
+      'G': [300, 155, 255],    // Magenta
+      'G#': [330, 155, 255]    // Pink (highest, wraps to red)
+    };
+    
+    // Default to fifths colors
+    this.noteColors = this.fifthsColors;
 
     // Initialize alphas (all visible initially)
     this.noteAlphas = {};
@@ -115,6 +138,14 @@ class ScaleVisualizer {
    */
   setByFifths(toSet) {
     this.byFifths = toSet;
+  }
+  
+  /**
+   * Set chromatic color mode (true = chromatic/frequency, false = fifths relationship)
+   */
+  setChromaticColors(value) {
+    this.chromaticColors = value;
+    this.noteColors = value ? this.chromaticColorsMap : this.fifthsColors;
   }
 
   /**
@@ -395,96 +426,3 @@ class ScaleVisualizer {
     pop();
   }
 }
-
-
-/**
- * SoundVisualizer - FFT-based sound visualization (hidden feature)
- * Unlocked by playing C augmented chord
- */
-class SoundVisualizer {
-  constructor(instrument, musicMaker, scaleVisualizer, x, y, w, h) {
-    this.instrument = instrument;
-    this.musicMaker = musicMaker;
-    this.scaleVisualizer = scaleVisualizer;
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-    this.show = false;
-    this.bins = 50;
-    
-    // FFT for audio analysis
-    this.fft = null;
-    
-    // Smoothed band values per note
-    this.smoothedBands = {};
-  }
-
-  /**
-   * Initialize FFT analyzer
-   */
-  initFFT() {
-    if (typeof FFT !== 'undefined') {
-      this.fft = new p5.FFT(0.8, 64);
-    }
-  }
-
-  /**
-   * Update position
-   */
-  setPosition(x, y, w, h) {
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-  }
-
-  /**
-   * Set current instrument
-   */
-  setCurrentInstrument(newInstrument) {
-    this.instrument = newInstrument;
-  }
-
-  /**
-   * Draw the visualizer
-   */
-  draw() {
-    // Check for special chord triggers
-    const currentChords = this.musicMaker.getCurrentlyPlayingChordsFromNotes(
-      this.musicMaker.getCurrentlyPlayingNotes()
-    );
-    
-    for (const chord of Object.keys(currentChords)) {
-      if (chord === 'Caug') {
-        this.show = true;
-      } else if (chord === 'C#aug') {
-        this.show = false;
-      }
-    }
-
-    if (!this.show || !this.fft) return;
-
-    push();
-    const spectrum = this.fft.analyze();
-    const barWidth = this.w / this.bins;
-    
-    colorMode(HSB, 360, 255, 255, 100);
-    noStroke();
-    
-    // Draw frequency bars
-    for (let i = 0; i < this.bins; i++) {
-      const amplitude = spectrum[i] || 0;
-      const barHeight = map(amplitude, 0, 255, 0, this.h);
-      const hue = map(i, 0, this.bins, 0, 360);
-      
-      fill(hue, 200, 255, 60);
-      // In WEBGL, rect origin is center, so we need to adjust
-      const barX = this.x + i * barWidth - this.w / 2;
-      const barY = this.y - barHeight / 2;
-      rect(barX, barY, barWidth - 1, barHeight);
-    }
-    pop();
-  }
-}
-
