@@ -19,8 +19,14 @@ let scaleSelect;
 let fifthsCheckbox;
 let chromaticColorsCheckbox;
 let visualizerCheckbox;
-let playSelectedBtn;
 let helpBtn;
+let progressionSelect;
+let playProgBtn;
+let speedSelect;
+let progressionDisplay;
+let progressionControls;
+let progressionInterval = null;
+let isProgressionPlaying = false;
 let closeHelpBtn;
 let helpPanel;
 let loadingOverlay;
@@ -133,9 +139,13 @@ function setupUI() {
   fifthsCheckbox = document.getElementById('fifths-checkbox');
   chromaticColorsCheckbox = document.getElementById('chromatic-colors-checkbox');
   visualizerCheckbox = document.getElementById('visualizer-checkbox');
-  playSelectedBtn = document.getElementById('play-selected-btn');
   helpBtn = document.getElementById('help-btn');
   closeHelpBtn = document.getElementById('close-help-btn');
+  progressionSelect = document.getElementById('progression-select');
+  playProgBtn = document.getElementById('play-prog-btn');
+  speedSelect = document.getElementById('speed-select');
+  progressionDisplay = document.getElementById('progression-display');
+  progressionControls = document.getElementById('progression-controls');
   helpPanel = document.getElementById('help-panel');
   loadingOverlay = document.getElementById('loading-overlay');
   togglePanelBtn = document.getElementById('toggle-panel');
@@ -144,6 +154,11 @@ function setupUI() {
   // Panel toggle
   togglePanelBtn.addEventListener('click', () => {
     controlsPanel.classList.toggle('expanded');
+    // Update wheel position based on panel state
+    const isExpanded = controlsPanel.classList.contains('expanded');
+    if (scaleVisualizer) {
+      scaleVisualizer.setPanelExpanded(isExpanded);
+    }
   });
   
   // Dropdown change handlers - apply immediately
@@ -166,8 +181,28 @@ function setupUI() {
     soundVisualizer.setShow(e.target.checked);
   });
   
-  // Play selected button
-  playSelectedBtn.addEventListener('click', playSelectedNotes);
+  // Progression controls
+  progressionSelect.addEventListener('change', (e) => {
+    stopProgressionPlayback();
+    const chord = musicMaker.setProgression(e.target.value);
+    updateProgressionDisplay(chord);
+  });
+  
+  playProgBtn.addEventListener('click', () => {
+    if (isProgressionPlaying) {
+      stopProgressionPlayback();
+    } else {
+      startProgressionPlayback();
+    }
+  });
+  
+  speedSelect.addEventListener('change', () => {
+    // If playing, restart with new speed
+    if (isProgressionPlaying) {
+      stopProgressionPlayback();
+      startProgressionPlayback();
+    }
+  });
   
   // Help panel toggle
   helpBtn.addEventListener('click', () => {
@@ -211,13 +246,89 @@ function onScaleChange() {
   console.log(`Changed to ${rootNote} ${scaleType}`);
 }
 
+
 /**
- * Play all currently selected notes
+ * Update progression display
  */
-function playSelectedNotes() {
-  const currentlyPlaying = musicMaker.getCurrentlyPlayingNotes();
-  for (const note of Object.keys(currentlyPlaying)) {
+function updateProgressionDisplay(chord) {
+  if (chord) {
+    progressionDisplay.textContent = `${chord.step}/${chord.total}: ${chord.name}`;
+    progressionControls.classList.remove('hidden');
+  } else {
+    progressionDisplay.textContent = '-';
+    progressionControls.classList.add('hidden');
+    stopProgressionPlayback();
+  }
+}
+
+/**
+ * Play current progression chord
+ */
+function playProgressionChord() {
+  // Stop any currently playing notes
+  const playing = musicMaker.getCurrentlyPlayingNotes();
+  for (const note of Object.keys(playing)) {
+    currentInstrument.stopNote(note);
+    musicMaker.releasePlayingNote(note);
+  }
+  
+  // Get and play the chord notes
+  const notes = musicMaker.getCurrentProgressionNotes();
+  for (const note of notes) {
     currentInstrument.playNote(note);
+    musicMaker.addPlayingNote(note);
+  }
+  
+  // Release after a portion of the interval (so chords don't overlap)
+  const speed = parseInt(speedSelect.value);
+  setTimeout(() => {
+    for (const note of notes) {
+      musicMaker.releasePlayingNote(note);
+    }
+  }, speed * 0.7);
+}
+
+/**
+ * Start auto-playing the progression
+ */
+function startProgressionPlayback() {
+  if (!musicMaker.currentProgression) return;
+  
+  isProgressionPlaying = true;
+  playProgBtn.textContent = '⏹';
+  playProgBtn.classList.add('playing');
+  
+  // Play first chord immediately
+  playProgressionChord();
+  updateProgressionDisplay(musicMaker.getCurrentProgressionChord());
+  
+  // Set up interval for subsequent chords
+  const speed = parseInt(speedSelect.value);
+  progressionInterval = setInterval(() => {
+    const chord = musicMaker.nextProgressionStep();
+    updateProgressionDisplay(chord);
+    playProgressionChord();
+  }, speed);
+}
+
+/**
+ * Stop auto-playing the progression
+ */
+function stopProgressionPlayback() {
+  isProgressionPlaying = false;
+  playProgBtn.textContent = '▶';
+  playProgBtn.classList.remove('playing');
+  
+  if (progressionInterval) {
+    clearInterval(progressionInterval);
+    progressionInterval = null;
+  }
+  
+  // Stop any playing notes
+  const playing = musicMaker.getCurrentlyPlayingNotes();
+  for (const note of Object.keys(playing)) {
+    currentInstrument.stopNote(note);
+    musicMaker.releasePlayingNote(note);
   }
 }
 

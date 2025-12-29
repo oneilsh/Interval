@@ -107,12 +107,12 @@ body {
   backdrop-filter: blur(16px);
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  padding: 16px;
+  padding: 14px;
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-width: 90vw;
+  gap: 10px;
+  width: 160px;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
@@ -123,28 +123,29 @@ body {
   position: absolute;
 }
 
-/* Control rows */
+/* Control rows - vertical stacking */
 .control-row {
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .control-row.actions {
-  align-items: center;
-  justify-content: flex-start;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
 }
 
 /* Control groups */
 .control-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-width: 100px;
+  gap: 3px;
+  width: 100%;
 }
 
 .control-group label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -155,17 +156,18 @@ body {
 select {
   font-family: 'Outfit', sans-serif;
   font-size: 13px;
-  padding: 8px 28px 8px 10px;
+  padding: 7px 24px 7px 10px;
   background: var(--bg-input);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--text-primary);
   cursor: pointer;
   transition: all 0.15s ease;
   appearance: none;
+  width: 100%;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%239898a8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 8px center;
+  background-position: right 6px center;
 }
 
 select:hover {
@@ -190,10 +192,11 @@ select:focus {
 }
 
 .checkbox-inline input {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   accent-color: var(--accent-primary);
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 /* Action buttons */
@@ -201,14 +204,16 @@ select:focus {
   font-family: 'Outfit', sans-serif;
   font-size: 12px;
   font-weight: 500;
-  padding: 8px 14px;
+  padding: 7px 10px;
   background: var(--bg-input);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
+  width: 100%;
+  text-align: center;
 }
 
 .action-btn:hover {
@@ -218,11 +223,93 @@ select:focus {
 }
 
 .action-btn.help {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   border-radius: 50%;
   font-weight: 600;
+  align-self: center;
+}
+
+/* Visual divider */
+.divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 2px 0;
+}
+
+/* ========================================
+   PROGRESSION CONTROLS
+   ======================================== */
+
+.progression-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.progression-controls.hidden {
+  display: none;
+}
+
+.prog-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.prog-btn {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  width: 32px;
+  height: 28px;
+  padding: 0;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.prog-btn:hover {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+}
+
+.prog-btn.playing {
+  background: var(--accent-primary);
+  color: white;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.prog-display {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  color: var(--text-primary);
+  flex: 1;
+  text-align: center;
+  padding: 5px 6px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+.speed-select {
+  width: 100%;
+  font-size: 11px;
+  padding: 6px 24px 6px 8px;
 }
 
 /* ========================================
@@ -337,6 +424,16 @@ select:focus {
   border: 1px solid var(--border-color);
   border-radius: 4px;
   color: var(--accent-primary);
+}
+
+.help-content ul {
+  margin: 10px 0 10px 20px;
+  padding-left: 0;
+}
+
+.help-content li {
+  margin-bottom: 6px;
+  line-height: 1.5;
 }
 
 /* ========================================

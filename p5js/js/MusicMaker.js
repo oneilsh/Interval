@@ -27,13 +27,167 @@ class MusicMaker {
     // Currently playing notes
     this.currentlyPlayingNotes = {};
 
+    // Chord progression state
+    this.currentProgression = null;
+    this.progressionStep = 0;
+    
     // Initialize all mappings
     this.setupNotesToNumbers();
     this.setupNumbersToNotes();
     this.setupFifths();
     this.setupScaleTypesToPatterns();
     this.setupChordsToNoteLists();
+    this.setupChordProgressions();
     this.setScale('C', 'Major');
+  }
+  
+  /**
+   * Setup common chord progressions
+   * Each progression is an array of [degree, quality] pairs
+   * Degrees are semitones from root, quality is chord suffix
+   */
+  setupChordProgressions() {
+    this.chordProgressions = {
+      'I-IV-V-I': [
+        { degree: 0, quality: '', name: 'I' },
+        { degree: 5, quality: '', name: 'IV' },
+        { degree: 7, quality: '', name: 'V' },
+        { degree: 0, quality: '', name: 'I' }
+      ],
+      'I-V-vi-IV': [
+        { degree: 0, quality: '', name: 'I' },
+        { degree: 7, quality: '', name: 'V' },
+        { degree: 9, quality: 'm', name: 'vi' },
+        { degree: 5, quality: '', name: 'IV' }
+      ],
+      'ii-V-I': [
+        { degree: 2, quality: 'm', name: 'ii' },
+        { degree: 7, quality: '', name: 'V' },
+        { degree: 0, quality: '', name: 'I' }
+      ],
+      'I-vi-IV-V': [
+        { degree: 0, quality: '', name: 'I' },
+        { degree: 9, quality: 'm', name: 'vi' },
+        { degree: 5, quality: '', name: 'IV' },
+        { degree: 7, quality: '', name: 'V' }
+      ],
+      'vi-IV-I-V': [
+        { degree: 9, quality: 'm', name: 'vi' },
+        { degree: 5, quality: '', name: 'IV' },
+        { degree: 0, quality: '', name: 'I' },
+        { degree: 7, quality: '', name: 'V' }
+      ],
+      'I-IV-vi-V': [
+        { degree: 0, quality: '', name: 'I' },
+        { degree: 5, quality: '', name: 'IV' },
+        { degree: 9, quality: 'm', name: 'vi' },
+        { degree: 7, quality: '', name: 'V' }
+      ],
+      '12 Bar Blues': [
+        { degree: 0, quality: '', name: 'I' },
+        { degree: 0, quality: '', name: 'I' },
+        { degree: 0, quality: '', name: 'I' },
+        { degree: 0, quality: '', name: 'I' },
+        { degree: 5, quality: '', name: 'IV' },
+        { degree: 5, quality: '', name: 'IV' },
+        { degree: 0, quality: '', name: 'I' },
+        { degree: 0, quality: '', name: 'I' },
+        { degree: 7, quality: '', name: 'V' },
+        { degree: 5, quality: '', name: 'IV' },
+        { degree: 0, quality: '', name: 'I' },
+        { degree: 7, quality: '', name: 'V' }
+      ]
+    };
+  }
+  
+  /**
+   * Get list of available progressions
+   */
+  getProgressionNames() {
+    return Object.keys(this.chordProgressions);
+  }
+  
+  /**
+   * Set current progression
+   */
+  setProgression(name) {
+    if (name === 'None' || !name) {
+      this.currentProgression = null;
+      this.progressionStep = 0;
+      return null;
+    }
+    this.currentProgression = name;
+    this.progressionStep = 0;
+    return this.getCurrentProgressionChord();
+  }
+  
+  /**
+   * Get current progression chord info
+   */
+  getCurrentProgressionChord() {
+    if (!this.currentProgression) return null;
+    
+    const prog = this.chordProgressions[this.currentProgression];
+    if (!prog) return null;
+    
+    const step = prog[this.progressionStep];
+    const rootNum = this.notesToNumbers[this.currentRoot];
+    const chordRootNum = (rootNum + step.degree) % 12;
+    const chordRoot = this.numbersToNotes[chordRootNum];
+    
+    return {
+      root: chordRoot,
+      quality: step.quality,
+      name: step.name,
+      step: this.progressionStep + 1,
+      total: prog.length,
+      displayName: `${chordRoot}${step.quality} (${step.name})`
+    };
+  }
+  
+  /**
+   * Get notes for current progression chord
+   */
+  getCurrentProgressionNotes() {
+    const chord = this.getCurrentProgressionChord();
+    if (!chord) return [];
+    
+    // Get chord intervals based on quality
+    let intervals;
+    if (chord.quality === 'm') {
+      intervals = [0, 3, 7];  // Minor triad
+    } else if (chord.quality === '7') {
+      intervals = [0, 4, 7, 10];  // Dominant 7th
+    } else if (chord.quality === 'dim') {
+      intervals = [0, 3, 6];  // Diminished
+    } else {
+      intervals = [0, 4, 7];  // Major triad
+    }
+    
+    const rootNum = this.notesToNumbers[chord.root];
+    return intervals.map(i => this.numbersToNotes[(rootNum + i) % 12]);
+  }
+  
+  /**
+   * Step to next chord in progression
+   */
+  nextProgressionStep() {
+    if (!this.currentProgression) return null;
+    
+    const prog = this.chordProgressions[this.currentProgression];
+    this.progressionStep = (this.progressionStep + 1) % prog.length;
+    return this.getCurrentProgressionChord();
+  }
+  
+  /**
+   * Step to previous chord in progression
+   */
+  prevProgressionStep() {
+    if (!this.currentProgression) return null;
+    
+    const prog = this.chordProgressions[this.currentProgression];
+    this.progressionStep = (this.progressionStep - 1 + prog.length) % prog.length;
+    return this.getCurrentProgressionChord();
   }
 
   /**
@@ -71,12 +225,46 @@ class MusicMaker {
    */
   setupScaleTypesToPatterns() {
     this.scaleTypesToPatterns = {
+      // Basic scales
       'Major': [0, 2, 4, 5, 7, 9, 11],
       'Minor': [0, 2, 3, 5, 7, 8, 10],
       'Minor Pent.': [0, 3, 5, 7, 10],
       'Major Pent.': [0, 2, 4, 7, 9],
-      'Blues': [0, 3, 5, 6, 7, 10]
+      'Blues': [0, 3, 5, 6, 7, 10],
+      // Modes (rotations of major scale)
+      'Ionian': [0, 2, 4, 5, 7, 9, 11],      // Same as Major
+      'Dorian': [0, 2, 3, 5, 7, 9, 10],      // Minor with raised 6th
+      'Phrygian': [0, 1, 3, 5, 7, 8, 10],    // Minor with lowered 2nd
+      'Lydian': [0, 2, 4, 6, 7, 9, 11],      // Major with raised 4th
+      'Mixolydian': [0, 2, 4, 5, 7, 9, 10],  // Major with lowered 7th
+      'Aeolian': [0, 2, 3, 5, 7, 8, 10],     // Same as Minor
+      'Locrian': [0, 1, 3, 5, 6, 8, 10]      // Diminished feel
     };
+    
+    // Mode relationships: which major scale each mode comes from
+    // e.g., D Dorian uses the same notes as C Major
+    this.modeParents = {
+      'Ionian': 0,     // Root is parent major
+      'Dorian': -2,    // 2 semitones below = parent major
+      'Phrygian': -4,  // 4 semitones below = parent major
+      'Lydian': -5,    // 5 semitones below = parent major
+      'Mixolydian': -7,// 7 semitones below = parent major
+      'Aeolian': -9,   // 9 semitones below = parent major (relative major)
+      'Locrian': -11   // 11 semitones below = parent major
+    };
+  }
+  
+  /**
+   * Get the parent major key for a mode
+   * e.g., D Dorian → C Major
+   */
+  getParentMajorKey(root, scaleType) {
+    if (this.modeParents[scaleType] === undefined) {
+      return null;
+    }
+    const rootNum = this.notesToNumbers[root];
+    const parentNum = (rootNum + this.modeParents[scaleType] + 12) % 12;
+    return this.numbersToNotes[parentNum];
   }
 
   /**
@@ -136,6 +324,13 @@ class MusicMaker {
    */
   getCurrentRoot() {
     return this.currentRoot;
+  }
+  
+  /**
+   * Get current scale type
+   */
+  getCurrentScaleType() {
+    return this.currentScaleType;
   }
 
   /**
@@ -213,14 +408,21 @@ class MusicMaker {
 
   /**
    * Get the relative major/minor of current scale
+   * Major-type scales show relative minor (3 semitones down)
+   * Minor-type scales show relative major (3 semitones up)
    */
   getCurrentRelative() {
-    if (!this.currentScaleType.startsWith('Major')) {
-      // For minor scales, relative major is 3 semitones up
-      return this.getNoteNameFromNum((this.getNumFromNoteName(this.currentRoot) + 3) % 12);
-    } else {
-      // For major scales, relative minor is 3 semitones down
+    // Major-sounding scales/modes
+    const majorTypes = ['Major', 'Ionian', 'Lydian', 'Mixolydian', 'Major Pent.'];
+    const isMajorType = majorTypes.includes(this.currentScaleType);
+    
+    if (isMajorType) {
+      // For major-type scales, relative minor is 3 semitones down
       return this.getNoteNameFromNum((this.getNumFromNoteName(this.currentRoot) - 3 + 12) % 12);
+    } else {
+      // For minor-type scales (Minor, Aeolian, Dorian, Phrygian, Locrian, Minor Pent., Blues)
+      // Relative major is 3 semitones up
+      return this.getNoteNameFromNum((this.getNumFromNoteName(this.currentRoot) + 3) % 12);
     }
   }
 

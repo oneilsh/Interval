@@ -27,6 +27,9 @@ class ScaleVisualizer {
     // Color mode: true = chromatic (by frequency), false = fifths relationship
     this.chromaticColors = false;
     
+    // Panel state - controls whether wheel is offset
+    this.panelExpanded = true;
+    
     // Note colors (using HSB, will convert to values)
     this.noteColors = {};
     // Note alphas (opacity for scale highlighting)
@@ -43,17 +46,35 @@ class ScaleVisualizer {
   }
 
   /**
+   * Set panel expanded state (controls wheel offset)
+   */
+  setPanelExpanded(expanded) {
+    this.panelExpanded = expanded;
+    // Recalculate dimensions with new panel state
+    if (this.canvasWidth && this.canvasHeight) {
+      this.updateDimensions(this.canvasWidth, this.canvasHeight);
+    }
+  }
+
+  /**
    * Update dimensions based on canvas size
    */
   updateDimensions(w, h) {
-    // In WEBGL mode, origin is at center, so we use 0,0
-    this.centerX = 0;
+    // In WEBGL mode, origin is at center
+    // Push wheel to the left only when panel is expanded
+    if (this.panelExpanded) {
+      this.centerX = -w * 0.08;  // Offset left by 8% of width when panel shown
+    } else {
+      this.centerX = 0;  // Center when panel hidden
+    }
     this.centerY = 0;
     this.canvasWidth = w;
     this.canvasHeight = h;
     // Adaptive margin: smaller on small screens
     const margin = min(90, max(40, min(w, h) * 0.15));
-    this.radius = min(w / 2, h / 2) - margin;
+    // Account for the offset when calculating radius (only when panel expanded)
+    const availableWidth = this.panelExpanded ? w * 0.84 : w;
+    this.radius = min(availableWidth / 2, h / 2) - margin;
     // Ensure minimum usable radius
     this.radius = max(80, this.radius);
     // Scale note circles with radius
@@ -288,6 +309,17 @@ class ScaleVisualizer {
     textAlign(LEFT, TOP);
     text(this.currentInstrument.getName(), leftX, topY);
     text(this.musicMaker.getCurrentScaleName(), leftX, topY + infoSize + 4);
+    
+    // Show parent major key for modes
+    const parentKey = this.musicMaker.getParentMajorKey(
+      this.musicMaker.getCurrentRoot(),
+      this.musicMaker.getCurrentScaleType()
+    );
+    if (parentKey) {
+      fill(150, 180, 200, 70);
+      textSize(infoSize - 2);
+      text(`Same notes as ${parentKey} Major`, leftX, topY + (infoSize + 4) * 2);
+    }
     
     // Only show keyboard hints on larger screens
     if (this.canvasWidth > 500) {

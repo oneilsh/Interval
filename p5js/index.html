@@ -10,15 +10,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.sound.min.js"></script>
   
   <!-- Custom styles -->
-  <link rel="stylesheet" href="css/style.css?v=5">
+  <link rel="stylesheet" href="css/style.css?v=53">
   
   <!-- Application modules -->
-  <script src="js/MusicMaker.js?v=20"></script>
-  <script src="js/SoundManager.js?v=20"></script>
-  <script src="js/Instrument.js?v=20"></script>
-  <script src="js/ScaleVisualizer.js?v=32"></script>
-  <script src="js/SoundVisualizer.js?v=34"></script>
-  <script src="js/sketch.js?v=32"></script>
+  <script src="js/MusicMaker.js?v=52"></script>
+  <script src="js/SoundManager.js?v=52"></script>
+  <script src="js/Instrument.js?v=52"></script>
+  <script src="js/ScaleVisualizer.js?v=52"></script>
+  <script src="js/SoundVisualizer.js?v=52"></script>
+  <script src="js/sketch.js?v=52"></script>
 </head>
 <body>
   <div id="app-container">
@@ -32,68 +32,103 @@
       </button>
       
       <div class="panel-content">
-        <div class="control-row">
-          <div class="control-group">
-            <label for="instrument-select">Temperament</label>
-            <select id="instrument-select">
-              <option value="Equal Tempered" selected>Equal Tempered</option>
-              <option value="Well Tempered">Well Tempered</option>
-              <option value="Carlos Super Just">Carlos Super Just</option>
-              <option value="Pythagorean">Pythagorean</option>
-              <option value="Grand Piano">Grand Piano</option>
-            </select>
-          </div>
-          
-          <div class="control-group">
-            <label for="note-select">Root</label>
-            <select id="note-select">
-              <option value="A">A</option>
-              <option value="A#">A♯</option>
-              <option value="B">B</option>
-              <option value="C" selected>C</option>
-              <option value="C#">C♯</option>
-              <option value="D">D</option>
-              <option value="D#">D♯</option>
-              <option value="E">E</option>
-              <option value="F">F</option>
-              <option value="F#">F♯</option>
-              <option value="G">G</option>
-              <option value="G#">G♯</option>
-            </select>
-          </div>
-          
-          <div class="control-group">
-            <label for="scale-select">Scale</label>
-            <select id="scale-select">
+        <div class="control-group">
+          <label for="instrument-select">Temperament</label>
+          <select id="instrument-select">
+            <option value="Equal Tempered" selected>Equal Tempered</option>
+            <option value="Well Tempered">Well Tempered</option>
+            <option value="Carlos Super Just">Carlos Super Just</option>
+            <option value="Pythagorean">Pythagorean</option>
+            <option value="Grand Piano">Grand Piano</option>
+          </select>
+        </div>
+        
+        <div class="control-group">
+          <label for="note-select">Root</label>
+          <select id="note-select">
+            <option value="A">A</option>
+            <option value="A#">A♯</option>
+            <option value="B">B</option>
+            <option value="C" selected>C</option>
+            <option value="C#">C♯</option>
+            <option value="D">D</option>
+            <option value="D#">D♯</option>
+            <option value="E">E</option>
+            <option value="F">F</option>
+            <option value="F#">F♯</option>
+            <option value="G">G</option>
+            <option value="G#">G♯</option>
+          </select>
+        </div>
+        
+        <div class="control-group">
+          <label for="scale-select">Scale</label>
+          <select id="scale-select">
+            <optgroup label="Scales">
               <option value="Major" selected>Major</option>
               <option value="Minor">Minor</option>
               <option value="Minor Pent.">Minor Pent.</option>
               <option value="Major Pent.">Major Pent.</option>
               <option value="Blues">Blues</option>
-            </select>
-          </div>
+            </optgroup>
+            <optgroup label="Modes">
+              <option value="Ionian">Ionian</option>
+              <option value="Dorian">Dorian</option>
+              <option value="Phrygian">Phrygian</option>
+              <option value="Lydian">Lydian</option>
+              <option value="Mixolydian">Mixolydian</option>
+              <option value="Aeolian">Aeolian</option>
+              <option value="Locrian">Locrian</option>
+            </optgroup>
+          </select>
         </div>
         
-        <div class="control-row actions">
-          <label class="checkbox-inline">
-            <input type="checkbox" id="fifths-checkbox">
-            <span>Circle of Fifths</span>
-          </label>
-          
-          <label class="checkbox-inline">
-            <input type="checkbox" id="chromatic-colors-checkbox">
-            <span>Chromatic Colors</span>
-          </label>
-          
-          <label class="checkbox-inline">
-            <input type="checkbox" id="visualizer-checkbox">
-            <span>Spectrum</span>
-          </label>
-          
-          <button id="play-selected-btn" class="action-btn">▶ Play Selected</button>
-          
-          <button id="help-btn" class="action-btn help">?</button>
+        <div class="control-group">
+          <label for="progression-select">Progression</label>
+          <select id="progression-select">
+            <option value="None">None</option>
+            <option value="I-IV-V-I">I-IV-V-I</option>
+            <option value="I-V-vi-IV">I-V-vi-IV</option>
+            <option value="ii-V-I">ii-V-I</option>
+            <option value="I-vi-IV-V">I-vi-IV-V</option>
+            <option value="vi-IV-I-V">vi-IV-I-V</option>
+            <option value="I-IV-vi-V">I-IV-vi-V</option>
+            <option value="12 Bar Blues">12 Bar Blues</option>
+          </select>
         </div>
+        
+        <div class="progression-controls hidden" id="progression-controls">
+          <div class="prog-row">
+            <button id="play-prog-btn" class="prog-btn" title="Play/Stop">▶</button>
+            <span id="progression-display" class="prog-display">-</span>
+          </div>
+          <select id="speed-select" class="speed-select" title="Speed">
+            <option value="2000">Slow</option>
+            <option value="1000" selected>Medium</option>
+            <option value="500">Fast</option>
+          </select>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <label class="checkbox-inline">
+          <input type="checkbox" id="fifths-checkbox">
+          <span>Circle of Fifths</span>
+        </label>
+        
+        <label class="checkbox-inline">
+          <input type="checkbox" id="chromatic-colors-checkbox">
+          <span>Chromatic Colors</span>
+        </label>
+        
+        <label class="checkbox-inline">
+          <input type="checkbox" id="visualizer-checkbox">
+          <span>Spectrum</span>
+        </label>
+        
+        <div class="divider"></div>
+        
+        <button id="help-btn" class="action-btn help">?</button>
       </div>
     </div>
     
@@ -107,23 +142,60 @@
         <div class="help-content">
           <p class="credit">Copyright Shawn T. O'Neil, 2013 | p5.js port 2024</p>
           
-          <h3>🎹 Playing Notes</h3>
-          <p><kbd>1</kbd>–<kbd>=</kbd> plays all 12 chromatic notes from the root.<br>
-          <kbd>q</kbd>–<kbd>]</kbd> plays only the notes in the current scale.</p>
+          <h3>Playing Notes</h3>
+          <p>MusicWheel provides two keyboard layouts for playing notes:</p>
+          <ul>
+            <li><kbd>1</kbd> through <kbd>=</kbd> keys play all 12 chromatic notes starting from the selected root note</li>
+            <li><kbd>q</kbd> through <kbd>]</kbd> keys play only the notes in the currently selected scale</li>
+          </ul>
+          <p>You can also click on individual notes in the wheel to hear them. Hold multiple keys to play chords. The app will detect common chord types (major, minor, diminished, augmented, seventh chords) and display them in the center of the wheel.</p>
           
-          <p>Click notes on the wheel to toggle them, then <strong>Play Selected</strong> to hear them together.</p>
+          <h3>The Wheel Visualization</h3>
+          <p>Notes are arranged around a circle and colored by their relationships in the circle of fifths. Notes in the current scale are shown at full brightness, while notes outside the scale appear dimmed.</p>
+          <p>Toggle <strong>Circle of Fifths</strong> to rearrange notes by their fifth relationships rather than chromatically. This reveals harmonic patterns more clearly.</p>
+          <p>Toggle <strong>Chromatic Colors</strong> to color notes by frequency (low to high) rather than by fifth relationships.</p>
+          <p>A small dot on the wheel indicates the relative major or minor key (e.g., for C Major, the dot shows A Minor).</p>
           
-          <h3>🎨 The Visualization</h3>
-          <p>Notes are colored by their fifth relationships. Toggle <strong>Circle of Fifths</strong> to see this arrangement. Detected chords appear in the center.</p>
+          <h3>Scales and Modes</h3>
+          <p>The app includes common scales (Major, Minor, Blues, Pentatonic) and all seven modes of the major scale:</p>
+          <ul>
+            <li><strong>Ionian</strong> - Same as the major scale</li>
+            <li><strong>Dorian</strong> - Minor scale with raised 6th</li>
+            <li><strong>Phrygian</strong> - Minor scale with lowered 2nd</li>
+            <li><strong>Lydian</strong> - Major scale with raised 4th</li>
+            <li><strong>Mixolydian</strong> - Major scale with lowered 7th</li>
+            <li><strong>Aeolian</strong> - Same as the natural minor scale</li>
+            <li><strong>Locrian</strong> - Diminished scale</li>
+          </ul>
+          <p>When a mode is selected, the app displays which major key contains the same notes (for example, "D Dorian" uses the same notes as "C Major").</p>
           
-          <h3>🎵 Temperaments</h3>
-          <p><strong>Equal:</strong> Modern standard, all keys sound alike.<br>
-          <strong>Well:</strong> Historical, each key has unique character.<br>
-          <strong>Pythagorean:</strong> Pure fifths, has a harsh "wolf interval".<br>
-          <strong>Carlos Super Just:</strong> Optimized pure intervals.</p>
+          <h3>Chord Progressions</h3>
+          <p>Select a common chord progression from the dropdown to explore harmonic movement. Available progressions include:</p>
+          <ul>
+            <li><strong>I-IV-V-I</strong> - Classic progression</li>
+            <li><strong>I-V-vi-IV</strong> - Popular in modern pop music</li>
+            <li><strong>ii-V-I</strong> - Jazz standard turnaround</li>
+            <li><strong>12 Bar Blues</strong> - Traditional blues form</li>
+          </ul>
+          <p>Use the play button to auto-play through the progression, or step through manually. Adjust the speed with the dropdown selector.</p>
           
-          <h3>📊 Spectrum</h3>
-          <p>Toggle <strong>Spectrum</strong> to see a frequency visualization colored by note relationships.</p>
+          <h3>Temperaments</h3>
+          <p>Different tuning systems (temperaments) change the exact frequencies of notes, creating different sonic characters:</p>
+          <ul>
+            <li><strong>Equal Tempered</strong> - Modern standard tuning. All semitones are equal, so every key sounds identical. This is used in virtually all contemporary music.</li>
+            <li><strong>Well Tempered</strong> - Historical tuning system from the Baroque era. Each key has a unique character and color, with some keys sounding "brighter" or "darker" than others.</li>
+            <li><strong>Pythagorean</strong> - Ancient tuning based on perfect fifths (3:2 ratio). Produces very pure-sounding fifths but has one extremely dissonant "wolf fifth" interval.</li>
+            <li><strong>Carlos Super Just</strong> - Modern just intonation system designed by Wendy Carlos, optimizing for pure intervals in multiple keys.</li>
+            <li><strong>Grand Piano</strong> - Sampled acoustic grand piano with natural harmonic richness.</li>
+          </ul>
+          
+          <h3>Spectrum Visualizer</h3>
+          <p>Toggle <strong>Spectrum</strong> to see a real-time frequency visualization that wraps around the outside of the wheel. The visualizer combines two elements:</p>
+          <ul>
+            <li>Overall frequency spectrum from FFT analysis</li>
+            <li>Direct tracking of which notes are currently playing</li>
+          </ul>
+          <p>Bars are positioned to match the note locations on the wheel and are colored using the same scheme. Active notes show brighter colors and taller bars.</p>
         </div>
       </div>
     </div>
