@@ -1,7 +1,7 @@
 /**
  * Instrument - Wrapper class for instrument/temperament sound playback
  * Ported from Processing to p5.js
- * Original copyright Shawn T. O'Neil 2013, LGPL
+ * Original copyright Shawn T. O'Neil 2013, CC BY-NC 4.0
  */
 
 class Instrument {

@@ -1,7 +1,7 @@
 /**
  * IntervalMaker - Music theory logic for scales, notes, chords, and fifths
  * Ported from Processing to p5.js
- * Original copyright Shawn T. O'Neil 2013, LGPL
+ * Original copyright Shawn T. O'Neil 2013, CC BY-NC 4.0
  */
 
 class IntervalMaker {

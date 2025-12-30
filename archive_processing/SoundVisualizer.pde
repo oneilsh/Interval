@@ -1,4 +1,4 @@
-/*MusicWheel is copyright Shawn T. O'Neil 2013. Source code is LGPL. If you use it, maybe give me a shoutout?
+/*MusicWheel is copyright Shawn T. O'Neil 2013. Source code is CC BY-NC 4.0. If you use it, maybe give me a shoutout?
 
 This file is part of MusicWheel.
 

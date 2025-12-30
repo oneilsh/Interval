@@ -1,5 +1,5 @@
 /*
-MusicWheel is Copyright Shawn T. O'Neil 2013. Code is released under the LGPL (see GPL and LGPL docs in "License.pde"), 
+MusicWheel is Copyright Shawn T. O'Neil 2013. Code is released under the CC BY-NC 4.0 (see GPL and CC BY-NC 4.0 docs in "License.pde"), 
 but if you use it, how about a shout-out of some kind?
 */
 

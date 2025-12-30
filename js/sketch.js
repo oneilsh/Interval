@@ -2,7 +2,7 @@
  * Interval - Main p5.js sketch
  * A music theory visualization tool for exploring notes, chords, scales, and temperaments
  * Ported from Processing to p5.js
- * Original copyright Shawn T. O'Neil 2013, LGPL
+ * Original copyright Shawn T. O'Neil 2013, CC BY-NC 4.0
  */
 
 // Global instances
