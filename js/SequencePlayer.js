@@ -14,14 +14,14 @@
 class SequencePlayer {
   /**
    * Create a sequence player
-   * @param {MusicMaker} musicMaker - Music theory engine
+   * @param {IntervalMaker} intervalMaker - Music theory engine
    * @param {Instrument} instrument - Sound playback
    * @param {ScaleVisualizer} scaleVisualizer - Visual display
    * @param {SoundVisualizer} soundVisualizer - Spectrum visualizer
    * @param {Object} uiRefs - References to UI elements for syncing
    */
-  constructor(musicMaker, instrument, scaleVisualizer, soundVisualizer, uiRefs = {}) {
-    this.musicMaker = musicMaker;
+  constructor(intervalMaker, instrument, scaleVisualizer, soundVisualizer, uiRefs = {}) {
+    this.intervalMaker = intervalMaker;
     this.instrument = instrument;
     this.scaleVisualizer = scaleVisualizer;
     this.soundVisualizer = soundVisualizer;
@@ -153,8 +153,8 @@ class SequencePlayer {
   saveCurrentConfig() {
     this.originalConfig = {
       temperament: this.instrument.getName(),
-      root: this.musicMaker.getCurrentRoot(),
-      scale: this.musicMaker.getCurrentScaleType(),
+      root: this.intervalMaker.getCurrentRoot(),
+      scale: this.intervalMaker.getCurrentScaleType(),
       fifths: this.scaleVisualizer.byFifths,
       chromaticColors: this.scaleVisualizer.chromaticColors,
       spectrum: this.soundVisualizer ? this.soundVisualizer.show : false
@@ -189,12 +189,12 @@ class SequencePlayer {
     }
     
     // Apply root and scale
-    const root = config.root || this.musicMaker.getCurrentRoot();
-    const scale = config.scale || this.musicMaker.getCurrentScaleType();
+    const root = config.root || this.intervalMaker.getCurrentRoot();
+    const scale = config.scale || this.intervalMaker.getCurrentScaleType();
     
-    if (root !== this.musicMaker.getCurrentRoot() || 
-        scale !== this.musicMaker.getCurrentScaleType()) {
-      this.musicMaker.setScale(root, scale);
+    if (root !== this.intervalMaker.getCurrentRoot() || 
+        scale !== this.intervalMaker.getCurrentScaleType()) {
+      this.intervalMaker.setScale(root, scale);
       
       // Update UI dropdowns
       if (this.uiRefs.noteSelect) {
@@ -258,20 +258,20 @@ class SequencePlayer {
       
       // Scale degree (number)
       if (typeof note === 'number') {
-        return this.musicMaker.getNoteForScaleDegree(note);
+        return this.intervalMaker.getNoteForScaleDegree(note);
       }
       
       // Scale degree as string
       if (typeof note === 'string' && /^\d+$/.test(note)) {
-        return this.musicMaker.getNoteForScaleDegree(parseInt(note));
+        return this.intervalMaker.getNoteForScaleDegree(parseInt(note));
       }
       
       // Semitone offset (e.g., "s4" for major third)
       if (typeof note === 'string' && /^s\d+$/.test(note)) {
         const offset = parseInt(note.substring(1));
-        const rootNum = this.musicMaker.notesToNumbers[this.musicMaker.getCurrentRoot()];
+        const rootNum = this.intervalMaker.notesToNumbers[this.intervalMaker.getCurrentRoot()];
         const noteNum = (rootNum + offset) % 12;
-        return this.musicMaker.numbersToNotes[noteNum];
+        return this.intervalMaker.numbersToNotes[noteNum];
       }
       
       // Unknown format, return as-is
@@ -337,14 +337,14 @@ class SequencePlayer {
     
     // Play notes
     for (const note of notes) {
-      this.musicMaker.addPlayingNote(note);
+      this.intervalMaker.addPlayingNote(note);
       this.instrument.playNote(note);
     }
     
     // Schedule note release (sustain)
     setTimeout(() => {
       for (const note of notes) {
-        this.musicMaker.releasePlayingNote(note);
+        this.intervalMaker.releasePlayingNote(note);
       }
     }, sustain);
     
@@ -367,9 +367,9 @@ class SequencePlayer {
     }
     
     // Release any playing notes
-    const playingNotes = this.musicMaker.getCurrentlyPlayingNotes();
+    const playingNotes = this.intervalMaker.getCurrentlyPlayingNotes();
     for (const note of Object.keys(playingNotes)) {
-      this.musicMaker.releasePlayingNote(note);
+      this.intervalMaker.releasePlayingNote(note);
     }
     
     this.currentSequence = null;

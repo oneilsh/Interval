@@ -9,12 +9,12 @@ class Instrument {
    * Create an instrument
    * @param {string} name - Instrument/temperament name (e.g., "Equal Tempered")
    * @param {SoundManager} soundManager - Sound manager instance
-   * @param {MusicMaker} musicMaker - Music maker instance
+   * @param {IntervalMaker} intervalMaker - Interval maker instance
    */
-  constructor(name, soundManager, musicMaker) {
+  constructor(name, soundManager, intervalMaker) {
     this.name = name;
     this.soundManager = soundManager;
-    this.musicMaker = musicMaker;
+    this.intervalMaker = intervalMaker;
     
     // Update sound manager to use this instrument
     this.soundManager.instrumentName = name;

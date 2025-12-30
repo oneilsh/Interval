@@ -1,4 +1,4 @@
-/* MusicWheel p5.js - Responsive Floating UI */
+/* Interval p5.js - Responsive Floating UI */
 
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap');
 
@@ -150,6 +150,14 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--text-muted);
+}
+
+.scale-info {
+  font-size: 11px;
+  color: var(--accent-primary);
+  margin-top: 2px;
+  font-weight: 500;
+  min-height: 1.2em;
 }
 
 /* Selects */

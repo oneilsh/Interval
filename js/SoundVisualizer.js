@@ -7,9 +7,9 @@
  */
 
 class SoundVisualizer {
-  constructor(instrument, musicMaker, scaleVisualizer, x, y, w, h) {
+  constructor(instrument, intervalMaker, scaleVisualizer, x, y, w, h) {
     this.instrument = instrument;
-    this.musicMaker = musicMaker;
+    this.intervalMaker = intervalMaker;
     this.scaleVisualizer = scaleVisualizer;
     
     // FFT settings
@@ -84,7 +84,7 @@ class SoundVisualizer {
    * Update note activity levels based on which notes are playing
    */
   updateNoteActivity() {
-    const playingNotes = this.musicMaker.getCurrentlyPlayingNotes();
+    const playingNotes = this.intervalMaker.getCurrentlyPlayingNotes();
     
     for (const note of Object.keys(this.noteActivity)) {
       const isPlaying = note in playingNotes;

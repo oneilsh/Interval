@@ -1,10 +1,10 @@
 /**
- * MusicMaker - Music theory logic for scales, notes, chords, and fifths
+ * IntervalMaker - Music theory logic for scales, notes, chords, and fifths
  * Ported from Processing to p5.js
  * Original copyright Shawn T. O'Neil 2013, LGPL
  */
 
-class MusicMaker {
+class IntervalMaker {
   constructor() {
     // Maps scale type names to interval patterns
     this.scaleTypesToPatterns = {};

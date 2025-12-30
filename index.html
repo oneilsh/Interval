@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MusicWheel</title>
+  <title>Interval</title>
   
   <!-- p5.js libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="css/style.css?v=80">
   
   <!-- Application modules -->
-  <script src="js/MusicMaker.js?v=71"></script>
+  <script src="js/IntervalMaker.js?v=71"></script>
   <script src="js/SoundManager.js?v=70"></script>
   <script src="js/Instrument.js?v=70"></script>
   <script src="js/ScaleVisualizer.js?v=70"></script>
@@ -81,6 +81,7 @@
               <option value="Locrian">Locrian</option>
             </optgroup>
           </select>
+          <div id="scale-info" class="scale-info"></div>
         </div>
         
         <div class="control-group">
@@ -166,14 +167,14 @@
     <div id="help-panel" class="hidden">
       <div class="help-modal">
         <div class="help-header">
-          <h2>MusicWheel</h2>
+          <h2>Interval</h2>
           <button id="close-help-btn">&times;</button>
         </div>
         <div class="help-content">
           <p class="credit">Copyright Shawn T. O'Neil, 2013 | p5.js port 2024</p>
           
-          <h3>What is MusicWheel?</h3>
-          <p>MusicWheel is an interactive tool for exploring music theory. It visualizes notes, scales, and chords on a circular display, and lets you hear how different tuning systems affect the sound of music.</p>
+          <h3>What is Interval?</h3>
+          <p>Interval is an interactive tool for exploring music theory. It visualizes notes, scales, and chords on a circular display, and lets you hear how different tuning systems affect the sound of music.</p>
           
           <h3>Playing Notes</h3>
           <p>There are two ways to play notes:</p>
@@ -197,7 +198,7 @@
             <li><a href="#" class="demo-link" data-sequence="Equal Tempered,C,Minor Pent.|C+D#+G|1500"><strong>Pentatonic</strong></a> - A 5-note scale common in rock, blues, and folk music worldwide</li>
             <li><a href="#" class="demo-link" data-sequence="Equal Tempered,C,Blues|C+D#+F#+G|1500"><strong>Blues</strong></a> - Pentatonic plus one extra "blue note" that gives it that bluesy sound</li>
           </ul>
-          <p><strong>Modes</strong> are variations of the major scale, each starting on a different note. They all use the same seven notes but have different "home bases," creating distinct moods:</p>
+          <p><strong>Modes</strong> are variations of a "parent" major scale, each starting on a different note. Modes of the same parent scale share all the same notes but have different "home bases," creating distinct moods:</p>
           <ul>
             <li><a href="#" class="demo-link" data-sequence="Equal Tempered,C,Ionian|C+E+G|1500"><strong>Ionian</strong></a> - The standard major scale</li>
             <li><a href="#" class="demo-link" data-sequence="Equal Tempered,D,Dorian|D+F+A|1500"><strong>Dorian</strong></a> - Minor but with a brighter 6th; common in jazz and Celtic music</li>
@@ -207,7 +208,7 @@
             <li><a href="#" class="demo-link" data-sequence="Equal Tempered,A,Aeolian|A+C+E|1500"><strong>Aeolian</strong></a> - The natural minor scale</li>
             <li><a href="#" class="demo-link" data-sequence="Equal Tempered,B,Locrian|B+D+F|1500"><strong>Locrian</strong></a> - Unstable and tense; rarely used as a "home" scale</li>
           </ul>
-          <p>The app shows which major key shares the same notes. For instance, D Dorian uses the same notes as C Major - it's just "C Major starting on D."</p>
+          <p>The app shows which "parent" major key shares the same notes. For instance, D Dorian uses the same notes as C Major - it's just "C Major starting on D."</p>
           
           <h3>Chord Progressions</h3>
           <p>A <strong>chord progression</strong> is a sequence of chords. Most songs use the same few progressions. The numbers (1, 4, 5, etc.) refer to scale degrees - if you're in C Major, 1=C, 4=F, 5=G.</p>
@@ -254,7 +255,7 @@
     <!-- Welcome overlay (first-time visitors) -->
     <div id="welcome-overlay" class="hidden">
       <div class="welcome-modal">
-        <h2>Welcome to MusicWheel</h2>
+        <h2>Welcome to Interval</h2>
         <p>Explore music theory through an interactive visualization. Play notes, build chords, and discover how different tuning systems change the sound of music.</p>
         
         <div class="keyboard-diagram">

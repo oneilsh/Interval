@@ -7,11 +7,11 @@
 class ScaleVisualizer {
   /**
    * Create the scale visualizer
-   * @param {MusicMaker} musicMaker - Music maker instance
+   * @param {IntervalMaker} intervalMaker - Interval maker instance
    * @param {Instrument} currentInstrument - Current instrument
    */
-  constructor(musicMaker, currentInstrument) {
-    this.musicMaker = musicMaker;
+  constructor(intervalMaker, currentInstrument) {
+    this.intervalMaker = intervalMaker;
     this.currentInstrument = currentInstrument;
     
     // Display settings
@@ -209,7 +209,7 @@ class ScaleVisualizer {
     
     for (const note of Object.keys(this.noteLocations)) {
       let currentPos = this.noteLocations[note];
-      const currentRoot = this.musicMaker.getCurrentRoot();
+      const currentRoot = this.intervalMaker.getCurrentRoot();
       
       let correctPos = this.byFifths 
         ? this.fifthLocations[note] 
@@ -261,7 +261,7 @@ class ScaleVisualizer {
     let changed = false;
     
     for (const noteName of Object.keys(this.noteAlphas)) {
-      const targetVal = this.musicMaker.isNoteInCurrentScale(noteName) ? 100 : this.minAlpha;
+      const targetVal = this.intervalMaker.isNoteInCurrentScale(noteName) ? 100 : this.minAlpha;
       const oldVal = this.noteAlphas[noteName];
       
       if (abs(targetVal - oldVal) > 0.5) {
@@ -312,7 +312,7 @@ class ScaleVisualizer {
     const yloc = this.centerY + this.radius * sin(radians(noteLoc * 30 - 90));
     
     // Draw relative indicator (small dot)
-    if (noteName === this.musicMaker.getCurrentRelative()) {
+    if (noteName === this.intervalMaker.getCurrentRelative()) {
       fill(0, 0, 0);
       strokeWeight(1.5);
       stroke(100, 100, 100, this.noteAlphas[noteName]);
@@ -323,7 +323,7 @@ class ScaleVisualizer {
     
     // Draw note circle
     fill(0, 0, 0);
-    if (this.musicMaker.isNotePlaying(noteName)) {
+    if (this.intervalMaker.isNotePlaying(noteName)) {
       strokeWeight(4);
       colorMode(HSB, 360, 255, 255, 100);
       const c = this.noteColors[noteName];
@@ -348,8 +348,8 @@ class ScaleVisualizer {
    * Draw detected chords
    */
   drawChords() {
-    const chords = this.musicMaker.getCurrentlyPlayingChordsFromNotes(
-      this.musicMaker.getCurrentlyPlayingNotes()
+    const chords = this.intervalMaker.getCurrentlyPlayingChordsFromNotes(
+      this.intervalMaker.getCurrentlyPlayingNotes()
     );
     
     for (const chord of Object.keys(chords)) {

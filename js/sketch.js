@@ -1,12 +1,12 @@
 /**
- * MusicWheel - Main p5.js sketch
+ * Interval - Main p5.js sketch
  * A music theory visualization tool for exploring notes, chords, scales, and temperaments
  * Ported from Processing to p5.js
  * Original copyright Shawn T. O'Neil 2013, LGPL
  */
 
 // Global instances
-let musicMaker;
+let intervalMaker;
 let soundManager;
 let currentInstrument;
 let scaleVisualizer;
@@ -17,6 +17,7 @@ let sequencePlayer;
 let instrumentSelect;
 let noteSelect;
 let scaleSelect;
+let scaleInfo;
 let orderRadios;
 let colorRadios;
 let spectrumRadios;
@@ -88,7 +89,7 @@ function setup() {
   }
   
   // Initialize core objects
-  musicMaker = new MusicMaker();
+  intervalMaker = new IntervalMaker();
   soundManager = new SoundManager();
   
   // Set up sound manager callbacks
@@ -105,16 +106,16 @@ function setup() {
     isLoadingInstrument = false;
     
     // Show welcome overlay for first-time visitors
-    if (!localStorage.getItem('musicwheel-welcomed')) {
+    if (!localStorage.getItem('interval-welcomed')) {
       showWelcome();
     }
   };
   
   // Create instrument with default temperament
-  currentInstrument = new Instrument('Equal Tempered', soundManager, musicMaker);
+  currentInstrument = new Instrument('Equal Tempered', soundManager, intervalMaker);
   
   // Create visualizers
-  scaleVisualizer = new ScaleVisualizer(musicMaker, currentInstrument);
+  scaleVisualizer = new ScaleVisualizer(intervalMaker, currentInstrument);
   scaleVisualizer.updateDimensions(w, h);
   
   // Default to chromatic colors
@@ -123,12 +124,12 @@ function setup() {
   // SoundVisualizer - radial visualization around the wheel
   soundVisualizer = new SoundVisualizer(
     currentInstrument,
-    musicMaker,
+    intervalMaker,
     scaleVisualizer
   );
   
   // Create sequence player for demos
-  sequencePlayer = new SequencePlayer(musicMaker, currentInstrument, scaleVisualizer, soundVisualizer);
+  sequencePlayer = new SequencePlayer(intervalMaker, currentInstrument, scaleVisualizer, soundVisualizer);
   
   // Setup UI
   setupUI();
@@ -161,6 +162,7 @@ function setupUI() {
   instrumentSelect = document.getElementById('instrument-select');
   noteSelect = document.getElementById('note-select');
   scaleSelect = document.getElementById('scale-select');
+  scaleInfo = document.getElementById('scale-info');
   orderRadios = document.querySelectorAll('input[name="order-mode"]');
   colorRadios = document.querySelectorAll('input[name="color-mode"]');
   spectrumRadios = document.querySelectorAll('input[name="spectrum-mode"]');
@@ -230,7 +232,7 @@ function setupUI() {
   // Progression controls
   progressionSelect.addEventListener('change', (e) => {
     stopProgressionPlayback();
-    const chord = musicMaker.setProgression(e.target.value);
+    const chord = intervalMaker.setProgression(e.target.value);
     updateProgressionDisplay(chord);
   });
   
@@ -286,6 +288,9 @@ function setupUI() {
   
   // Check for URL demo parameter
   checkURLDemo();
+  
+  // Initial scale info
+  updateScaleInfo();
 }
 
 /**
@@ -296,7 +301,7 @@ async function onInstrumentChange() {
   
   if (instrumentName !== currentInstrument.getName()) {
     await loadSoundsForInstrument(instrumentName);
-    currentInstrument = new Instrument(instrumentName, soundManager, musicMaker);
+    currentInstrument = new Instrument(instrumentName, soundManager, intervalMaker);
     scaleVisualizer.setCurrentInstrument(currentInstrument);
     soundVisualizer.setCurrentInstrument(currentInstrument);
     console.log(`Changed to ${instrumentName}`);
@@ -309,13 +314,32 @@ async function onInstrumentChange() {
 function onScaleChange() {
   const rootNote = noteSelect.value;
   const scaleType = scaleSelect.value;
-  musicMaker.setScale(rootNote, scaleType);
+  intervalMaker.setScale(rootNote, scaleType);
   console.log(`Changed to ${rootNote} ${scaleType}`);
   
+  updateScaleInfo();
+  
   // Update progression display if active (chords change with scale)
-  if (musicMaker.currentProgression) {
-    const chord = musicMaker.getCurrentProgressionChord();
+  if (intervalMaker.currentProgression) {
+    const chord = intervalMaker.getCurrentProgressionChord();
     updateProgressionDisplay(chord);
+  }
+}
+
+/**
+ * Update scale info text (parent major key for modes)
+ */
+function updateScaleInfo() {
+  if (!scaleInfo || !intervalMaker) return;
+  
+  const root = intervalMaker.getCurrentRoot();
+  const scale = intervalMaker.getCurrentScaleType();
+  const parentMajor = intervalMaker.getParentMajorKey(root, scale);
+  
+  if (parentMajor && parentMajor !== root) {
+    scaleInfo.textContent = `Mode of ${parentMajor} Major`;
+  } else {
+    scaleInfo.textContent = '';
   }
 }
 
@@ -339,24 +363,24 @@ function updateProgressionDisplay(chord) {
  */
 function playProgressionChord() {
   // Stop any currently playing notes
-  const playing = musicMaker.getCurrentlyPlayingNotes();
+  const playing = intervalMaker.getCurrentlyPlayingNotes();
   for (const note of Object.keys(playing)) {
     currentInstrument.stopNote(note);
-    musicMaker.releasePlayingNote(note);
+    intervalMaker.releasePlayingNote(note);
   }
   
   // Get and play the chord notes
-  const notes = musicMaker.getCurrentProgressionNotes();
+  const notes = intervalMaker.getCurrentProgressionNotes();
   for (const note of notes) {
     currentInstrument.playNote(note);
-    musicMaker.addPlayingNote(note);
+    intervalMaker.addPlayingNote(note);
   }
   
   // Release after a portion of the interval (so chords don't overlap)
   const speed = parseInt(speedSelect.value);
   setTimeout(() => {
     for (const note of notes) {
-      musicMaker.releasePlayingNote(note);
+      intervalMaker.releasePlayingNote(note);
     }
   }, speed * 0.7);
 }
@@ -365,7 +389,7 @@ function playProgressionChord() {
  * Start auto-playing the progression
  */
 function startProgressionPlayback() {
-  if (!musicMaker.currentProgression) return;
+  if (!intervalMaker.currentProgression) return;
   
   isProgressionPlaying = true;
   playProgBtn.textContent = '⏹';
@@ -373,12 +397,12 @@ function startProgressionPlayback() {
   
   // Play first chord immediately
   playProgressionChord();
-  updateProgressionDisplay(musicMaker.getCurrentProgressionChord());
+  updateProgressionDisplay(intervalMaker.getCurrentProgressionChord());
   
   // Set up interval for subsequent chords
   const speed = parseInt(speedSelect.value);
   progressionInterval = setInterval(() => {
-    const chord = musicMaker.nextProgressionStep();
+    const chord = intervalMaker.nextProgressionStep();
     updateProgressionDisplay(chord);
     playProgressionChord();
   }, speed);
@@ -398,10 +422,10 @@ function stopProgressionPlayback() {
   }
   
   // Stop any playing notes
-  const playing = musicMaker.getCurrentlyPlayingNotes();
+  const playing = intervalMaker.getCurrentlyPlayingNotes();
   for (const note of Object.keys(playing)) {
     currentInstrument.stopNote(note);
-    musicMaker.releasePlayingNote(note);
+    intervalMaker.releasePlayingNote(note);
   }
 }
 
@@ -439,7 +463,7 @@ function dismissWelcome() {
   if (welcomeOverlay) {
     welcomeOverlay.classList.add('hidden');
   }
-  localStorage.setItem('musicwheel-welcomed', 'true');
+  localStorage.setItem('interval-welcomed', 'true');
 }
 
 /**
@@ -447,17 +471,17 @@ function dismissWelcome() {
  */
 function resetApp() {
   // Stop any playing notes
-  const playing = musicMaker.getCurrentlyPlayingNotes();
+  const playing = intervalMaker.getCurrentlyPlayingNotes();
   for (const note of Object.keys(playing)) {
     currentInstrument.stopNote(note);
-    musicMaker.releasePlayingNote(note);
+    intervalMaker.releasePlayingNote(note);
   }
   
   // Stop progression playback
   stopProgressionPlayback();
   
   // Reset to default settings
-  musicMaker.setScale('C', 'Major');
+  intervalMaker.setScale('C', 'Major');
   noteSelect.value = 'C';
   scaleSelect.value = 'Major';
   
@@ -478,7 +502,7 @@ function resetApp() {
   
   // Reset progression
   progressionSelect.value = '';
-  musicMaker.setProgression(null);
+  intervalMaker.setProgression(null);
   progressionDisplay.textContent = '-';
   progressionControls.classList.add('hidden');
   
@@ -487,7 +511,7 @@ function resetApp() {
   hideHelpStatusBar();
   
   // Clear the welcomed flag and show welcome screen
-  localStorage.removeItem('musicwheel-welcomed');
+  localStorage.removeItem('interval-welcomed');
   showWelcome();
 }
 
@@ -544,33 +568,33 @@ function keyPressed() {
   let note = '';
   
   // Scale notes: q through ]
-  if (key === 'q') note = musicMaker.getNoteNameFromNumberInCurrentScale(1);
-  else if (key === 'w') note = musicMaker.getNoteNameFromNumberInCurrentScale(2);
-  else if (key === 'e') note = musicMaker.getNoteNameFromNumberInCurrentScale(3);
-  else if (key === 'r') note = musicMaker.getNoteNameFromNumberInCurrentScale(4);
-  else if (key === 't') note = musicMaker.getNoteNameFromNumberInCurrentScale(5);
-  else if (key === 'y') note = musicMaker.getNoteNameFromNumberInCurrentScale(6);
-  else if (key === 'u') note = musicMaker.getNoteNameFromNumberInCurrentScale(7);
-  else if (key === 'i') note = musicMaker.getNoteNameFromNumberInCurrentScale(8);
-  else if (key === 'o') note = musicMaker.getNoteNameFromNumberInCurrentScale(9);
-  else if (key === 'p') note = musicMaker.getNoteNameFromNumberInCurrentScale(10);
-  else if (key === '[') note = musicMaker.getNoteNameFromNumberInCurrentScale(11);
-  else if (key === ']') note = musicMaker.getNoteNameFromNumberInCurrentScale(12);
-  else if (key === '\\') note = musicMaker.getNoteNameFromNumberInCurrentScale(13);
+  if (key === 'q') note = intervalMaker.getNoteNameFromNumberInCurrentScale(1);
+  else if (key === 'w') note = intervalMaker.getNoteNameFromNumberInCurrentScale(2);
+  else if (key === 'e') note = intervalMaker.getNoteNameFromNumberInCurrentScale(3);
+  else if (key === 'r') note = intervalMaker.getNoteNameFromNumberInCurrentScale(4);
+  else if (key === 't') note = intervalMaker.getNoteNameFromNumberInCurrentScale(5);
+  else if (key === 'y') note = intervalMaker.getNoteNameFromNumberInCurrentScale(6);
+  else if (key === 'u') note = intervalMaker.getNoteNameFromNumberInCurrentScale(7);
+  else if (key === 'i') note = intervalMaker.getNoteNameFromNumberInCurrentScale(8);
+  else if (key === 'o') note = intervalMaker.getNoteNameFromNumberInCurrentScale(9);
+  else if (key === 'p') note = intervalMaker.getNoteNameFromNumberInCurrentScale(10);
+  else if (key === '[') note = intervalMaker.getNoteNameFromNumberInCurrentScale(11);
+  else if (key === ']') note = intervalMaker.getNoteNameFromNumberInCurrentScale(12);
+  else if (key === '\\') note = intervalMaker.getNoteNameFromNumberInCurrentScale(13);
   
   // Chromatic notes: 1 through =
-  else if (key === '1') note = musicMaker.getNoteNameFromNumRelativeToRoot(0);
-  else if (key === '2') note = musicMaker.getNoteNameFromNumRelativeToRoot(1);
-  else if (key === '3') note = musicMaker.getNoteNameFromNumRelativeToRoot(2);
-  else if (key === '4') note = musicMaker.getNoteNameFromNumRelativeToRoot(3);
-  else if (key === '5') note = musicMaker.getNoteNameFromNumRelativeToRoot(4);
-  else if (key === '6') note = musicMaker.getNoteNameFromNumRelativeToRoot(5);
-  else if (key === '7') note = musicMaker.getNoteNameFromNumRelativeToRoot(6);
-  else if (key === '8') note = musicMaker.getNoteNameFromNumRelativeToRoot(7);
-  else if (key === '9') note = musicMaker.getNoteNameFromNumRelativeToRoot(8);
-  else if (key === '0') note = musicMaker.getNoteNameFromNumRelativeToRoot(9);
-  else if (key === '-') note = musicMaker.getNoteNameFromNumRelativeToRoot(10);
-  else if (key === '=') note = musicMaker.getNoteNameFromNumRelativeToRoot(11);
+  else if (key === '1') note = intervalMaker.getNoteNameFromNumRelativeToRoot(0);
+  else if (key === '2') note = intervalMaker.getNoteNameFromNumRelativeToRoot(1);
+  else if (key === '3') note = intervalMaker.getNoteNameFromNumRelativeToRoot(2);
+  else if (key === '4') note = intervalMaker.getNoteNameFromNumRelativeToRoot(3);
+  else if (key === '5') note = intervalMaker.getNoteNameFromNumRelativeToRoot(4);
+  else if (key === '6') note = intervalMaker.getNoteNameFromNumRelativeToRoot(5);
+  else if (key === '7') note = intervalMaker.getNoteNameFromNumRelativeToRoot(6);
+  else if (key === '8') note = intervalMaker.getNoteNameFromNumRelativeToRoot(7);
+  else if (key === '9') note = intervalMaker.getNoteNameFromNumRelativeToRoot(8);
+  else if (key === '0') note = intervalMaker.getNoteNameFromNumRelativeToRoot(9);
+  else if (key === '-') note = intervalMaker.getNoteNameFromNumRelativeToRoot(10);
+  else if (key === '=') note = intervalMaker.getNoteNameFromNumRelativeToRoot(11);
   
   // Escape to close help
   else if (keyCode === ESCAPE) {
@@ -580,10 +604,10 @@ function keyPressed() {
   }
   
   if (note !== '') {
-    if (!musicMaker.isNotePlaying(note)) {
+    if (!intervalMaker.isNotePlaying(note)) {
       currentInstrument.playNote(note);
     }
-    musicMaker.addPlayingNote(note);
+    intervalMaker.addPlayingNote(note);
   }
 }
 
@@ -596,39 +620,39 @@ function keyReleased() {
   let note = '';
   
   // Scale notes: q through ]
-  if (key === 'q') note = musicMaker.getNoteNameFromNumberInCurrentScale(1);
-  else if (key === 'w') note = musicMaker.getNoteNameFromNumberInCurrentScale(2);
-  else if (key === 'e') note = musicMaker.getNoteNameFromNumberInCurrentScale(3);
-  else if (key === 'r') note = musicMaker.getNoteNameFromNumberInCurrentScale(4);
-  else if (key === 't') note = musicMaker.getNoteNameFromNumberInCurrentScale(5);
-  else if (key === 'y') note = musicMaker.getNoteNameFromNumberInCurrentScale(6);
-  else if (key === 'u') note = musicMaker.getNoteNameFromNumberInCurrentScale(7);
-  else if (key === 'i') note = musicMaker.getNoteNameFromNumberInCurrentScale(8);
-  else if (key === 'o') note = musicMaker.getNoteNameFromNumberInCurrentScale(9);
-  else if (key === 'p') note = musicMaker.getNoteNameFromNumberInCurrentScale(10);
-  else if (key === '[') note = musicMaker.getNoteNameFromNumberInCurrentScale(11);
-  else if (key === ']') note = musicMaker.getNoteNameFromNumberInCurrentScale(12);
-  else if (key === '\\') note = musicMaker.getNoteNameFromNumberInCurrentScale(13);
+  if (key === 'q') note = intervalMaker.getNoteNameFromNumberInCurrentScale(1);
+  else if (key === 'w') note = intervalMaker.getNoteNameFromNumberInCurrentScale(2);
+  else if (key === 'e') note = intervalMaker.getNoteNameFromNumberInCurrentScale(3);
+  else if (key === 'r') note = intervalMaker.getNoteNameFromNumberInCurrentScale(4);
+  else if (key === 't') note = intervalMaker.getNoteNameFromNumberInCurrentScale(5);
+  else if (key === 'y') note = intervalMaker.getNoteNameFromNumberInCurrentScale(6);
+  else if (key === 'u') note = intervalMaker.getNoteNameFromNumberInCurrentScale(7);
+  else if (key === 'i') note = intervalMaker.getNoteNameFromNumberInCurrentScale(8);
+  else if (key === 'o') note = intervalMaker.getNoteNameFromNumberInCurrentScale(9);
+  else if (key === 'p') note = intervalMaker.getNoteNameFromNumberInCurrentScale(10);
+  else if (key === '[') note = intervalMaker.getNoteNameFromNumberInCurrentScale(11);
+  else if (key === ']') note = intervalMaker.getNoteNameFromNumberInCurrentScale(12);
+  else if (key === '\\') note = intervalMaker.getNoteNameFromNumberInCurrentScale(13);
   
   // Chromatic notes: 1 through =
-  else if (key === '1') note = musicMaker.getNoteNameFromNumRelativeToRoot(0);
-  else if (key === '2') note = musicMaker.getNoteNameFromNumRelativeToRoot(1);
-  else if (key === '3') note = musicMaker.getNoteNameFromNumRelativeToRoot(2);
-  else if (key === '4') note = musicMaker.getNoteNameFromNumRelativeToRoot(3);
-  else if (key === '5') note = musicMaker.getNoteNameFromNumRelativeToRoot(4);
-  else if (key === '6') note = musicMaker.getNoteNameFromNumRelativeToRoot(5);
-  else if (key === '7') note = musicMaker.getNoteNameFromNumRelativeToRoot(6);
-  else if (key === '8') note = musicMaker.getNoteNameFromNumRelativeToRoot(7);
-  else if (key === '9') note = musicMaker.getNoteNameFromNumRelativeToRoot(8);
-  else if (key === '0') note = musicMaker.getNoteNameFromNumRelativeToRoot(9);
-  else if (key === '-') note = musicMaker.getNoteNameFromNumRelativeToRoot(10);
-  else if (key === '=') note = musicMaker.getNoteNameFromNumRelativeToRoot(11);
+  else if (key === '1') note = intervalMaker.getNoteNameFromNumRelativeToRoot(0);
+  else if (key === '2') note = intervalMaker.getNoteNameFromNumRelativeToRoot(1);
+  else if (key === '3') note = intervalMaker.getNoteNameFromNumRelativeToRoot(2);
+  else if (key === '4') note = intervalMaker.getNoteNameFromNumRelativeToRoot(3);
+  else if (key === '5') note = intervalMaker.getNoteNameFromNumRelativeToRoot(4);
+  else if (key === '6') note = intervalMaker.getNoteNameFromNumRelativeToRoot(5);
+  else if (key === '7') note = intervalMaker.getNoteNameFromNumRelativeToRoot(6);
+  else if (key === '8') note = intervalMaker.getNoteNameFromNumRelativeToRoot(7);
+  else if (key === '9') note = intervalMaker.getNoteNameFromNumRelativeToRoot(8);
+  else if (key === '0') note = intervalMaker.getNoteNameFromNumRelativeToRoot(9);
+  else if (key === '-') note = intervalMaker.getNoteNameFromNumRelativeToRoot(10);
+  else if (key === '=') note = intervalMaker.getNoteNameFromNumRelativeToRoot(11);
   
   if (note !== '') {
-    if (musicMaker.isNotePlaying(note)) {
+    if (intervalMaker.isNotePlaying(note)) {
       currentInstrument.stopNote(note);
     }
-    musicMaker.releasePlayingNote(note);
+    intervalMaker.releasePlayingNote(note);
   }
 }
 
@@ -668,7 +692,7 @@ function mouseMoved() {
  * Show tooltip for a note
  */
 function showNoteTooltip(note, x, y) {
-  const info = musicMaker.getNoteInfo(note);
+  const info = intervalMaker.getNoteInfo(note);
   
   let html = `<div class="note-name">${info.displayName}</div>`;
   // html += `<div class="note-freq">${info.frequency.toFixed(1)} Hz</div>`;
@@ -738,12 +762,12 @@ function mousePressed() {
   const notePoked = scaleVisualizer.getNote(webglX, webglY);
   
   if (notePoked !== null) {
-    if (musicMaker.isNotePlaying(notePoked)) {
+    if (intervalMaker.isNotePlaying(notePoked)) {
       currentInstrument.stopNote(notePoked);
-      musicMaker.releasePlayingNote(notePoked);
+      intervalMaker.releasePlayingNote(notePoked);
     } else {
       currentInstrument.playNote(notePoked);
-      musicMaker.addPlayingNote(notePoked);
+      intervalMaker.addPlayingNote(notePoked);
     }
   }
 }
@@ -769,7 +793,7 @@ function setupDemoLinks() {
       await sequencePlayer.play(sequenceStr);
       
       // Update UI elements to reflect new configuration
-      if (instrumentSelect && sequencePlayer.musicMaker) {
+      if (instrumentSelect && sequencePlayer.intervalMaker) {
         // UI is already updated by sequencePlayer.applyConfig via uiRefs
       }
     });
@@ -821,29 +845,35 @@ function hideHelpStatusBar() {
  * Update the help status bar with current config and chord info
  */
 function updateHelpStatusBar() {
-  if (!helpStatusBar || !isHelpVisible || !musicMaker) return;
+  if (!helpStatusBar || !isHelpVisible || !intervalMaker) return;
   
   // Get current configuration
   const temperament = currentInstrument ? currentInstrument.getName() : 'Equal Tempered';
-  const root = musicMaker.getCurrentRoot();
-  const scale = musicMaker.getCurrentScaleType();
+  const root = intervalMaker.getCurrentRoot();
+  const scale = intervalMaker.getCurrentScaleType();
+  
+  const parentMajor = intervalMaker.getParentMajorKey(root, scale);
+  let configText = `${temperament} | ${root} ${scale}`;
+  if (parentMajor && parentMajor !== root) {
+    configText += ` (Mode of ${parentMajor} Major)`;
+  }
   
   const configEl = helpStatusBar.querySelector('.status-config');
   if (configEl) {
-    configEl.textContent = `${temperament} | ${root} ${scale}`;
+    configEl.textContent = configText;
   }
   
   // Get currently playing chord info
   const chordEl = helpStatusBar.querySelector('.status-chord');
   if (chordEl) {
-    const playingNotes = musicMaker.getCurrentlyPlayingNotes();
+    const playingNotes = intervalMaker.getCurrentlyPlayingNotes();
     const noteNames = Object.keys(playingNotes);
     
     if (noteNames.length === 0) {
       chordEl.textContent = 'No notes playing';
     } else {
       // Get detected chords
-      const chords = musicMaker.getCurrentlyPlayingChordsFromNotes(playingNotes);
+      const chords = intervalMaker.getCurrentlyPlayingChordsFromNotes(playingNotes);
       const chordNames = Object.keys(chords).filter(c => !c.endsWith('f')); // Filter out fifths
       
       if (chordNames.length > 0) {
