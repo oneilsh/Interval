@@ -807,6 +807,65 @@ select:focus {
   transform: translateY(0);
 }
 
+/* Chord examples section */
+.chord-examples {
+  margin-top: 16px;
+  margin-bottom: 20px;
+}
+
+.chord-examples-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.chord-example {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.chord-example:last-child {
+  margin-bottom: 0;
+}
+
+.chord-keys {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 140px;
+  justify-content: flex-end;
+}
+
+.chord-keys kbd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 8px;
+  border-radius: 5px;
+  color: white;
+  min-width: 28px;
+  text-align: center;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.chord-keys .plus {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.chord-result {
+  font-size: 12px;
+  color: var(--text-primary);
+  font-weight: 500;
+  min-width: 90px;
+  text-align: left;
+}
+
 /* Bottom action row (help + reset) */
 .bottom-actions {
   display: flex;

@@ -10,7 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.sound.min.js"></script>
   
   <!-- Custom styles -->
-  <link rel="stylesheet" href="css/style.css?v=80">
+  <link rel="stylesheet" href="css/style.css?v=81">
   
   <!-- Application modules -->
   <script src="js/IntervalMaker.js?v=71"></script>
@@ -175,7 +175,7 @@
           
           <h3>What is Interval?</h3>
           <p>Interval is an interactive tool for exploring music theory. It visualizes notes, scales, and chords on a circular display, and lets you hear how different tuning systems affect the sound of music.</p>
-          
+
           <h3>Playing Notes</h3>
           <p>There are two ways to play notes:</p>
           <ul>
@@ -222,21 +222,21 @@
           
           <h3>Temperaments (Tuning Systems)</h3>
           <p>Here's a secret: the notes on a piano are slightly "out of tune" - on purpose! A <strong>temperament</strong> is a system for tuning notes. The challenge is mathematical: you can't have perfectly pure fifths (3:2 frequency ratio) AND perfectly pure thirds (5:4 frequency ratio) AND be able to play in any key. Different temperaments make different trade-offs.</p>
-          
+
           <p><strong>Important:</strong> Except for Equal Tempered, all temperaments are "keyed" - they're designed around a specific root note. The samples in this app are tuned relative to C, so C Major represents the "home" key where the tuning is optimized. When you select a different root note, the temperament characteristics shift accordingly - you're essentially playing in a key that's "farther" or "closer" to the tuning's home base.</p>
-          
+
           <p><strong>Equal Tempered</strong> (Modern Standard)</p>
           <p>The one temperament that isn't keyed. Every half-step is exactly the same size, so every key sounds identical and you can transpose freely. The trade-off: no interval is perfectly pure (e.g. a perfect fifth should be 3:2 = 1.5, but in equal temperament it's ~1.498). This tiny compromise in every interval is why modern instruments can play in any key. This is how virtually all contemporary instruments are tuned. Listen to <a href="#" class="demo-link" data-sequence="Equal Tempered,C,Major|C+E+G|2000">C Major</a> then <a href="#" class="demo-link" data-sequence="Equal Tempered,F#,Major|F#+A#+C#|2000">F# Major</a> - they sound identical in character.</p>
-          
+
           <p><strong>Well Tempered</strong> (Baroque Era)</p>
           <p>Notes are adjusted so that all keys are playable, but each key retains its own "color." Keys close to C (few sharps/flats) sound purer and brighter because the tuning favors them. Keys far from C (like F# Major with six sharps) accumulate small tuning compromises that make them sound more tense and darker. Bach wrote "The Well-Tempered Clavier" specifically to showcase how each of the 24 keys has its own character. Compare <a href="#" class="demo-link" data-sequence="Well Tempered,C,Major|C+E+G|2000">C Major (pure)</a> to <a href="#" class="demo-link" data-sequence="Well Tempered,F#,Major|F#+A#+C#|2000">F# Major (edgy)</a> - you'll hear C sound clean while F# has more tension.</p>
-          
+
           <p><strong>Pythagorean</strong> (Ancient Greek)</p>
           <p>Built entirely by stacking pure fifths (3:2 ratio) starting from C. Fifths sound incredibly pure, but here's the problem: if you stack 12 perfect fifths (C→G→D→A→E→B→F#→C#→G#→D#→A#→F→C), you should return to C - but mathematically, you land slightly sharp. This leftover error (called the "Pythagorean comma") has to go somewhere, creating one horribly out-of-tune interval called the <strong>"wolf fifth"</strong> - traditionally placed between G# and Eb where it was least likely to be needed. <a href="#" class="demo-link" data-sequence="Pythagorean|G#+D#|2500">Hear the wolf fifth</a> - instead of a pure fifth, you get a dissonant howl! Compare to a <a href="#" class="demo-link" data-sequence="Pythagorean|C+G|2500">pure C-G fifth</a>.</p>
-          
+
           <p><strong>Carlos Super Just</strong></p>
           <p>Created by electronic music pioneer Wendy Carlos for her groundbreaking synthesizer albums. This is a form of "just intonation" - tuning based on pure mathematical ratios. Chords in C and nearby keys sound incredibly pure and beatless because their intervals are exact ratios (like 5:4 for major thirds). But this purity comes at a cost: keys far from C sound noticeably out of tune. Compare <a href="#" class="demo-link" data-sequence="Carlos Super Just,C,Major|C+E+G|2000">C Major (pure, locked-in)</a> to <a href="#" class="demo-link" data-sequence="Carlos Super Just,F#,Major|F#+A#+C#|2000">F# Major (buzzy, restless)</a> to hear the dramatic difference.</p>
-          
+
           <h3>Spectrum Visualizer</h3>
           <p>Toggle <strong>Spectrum</strong> to see a visualization around the wheel that responds to the sounds being played. It combines frequency analysis with direct note tracking for a fun (if not scientifically precise) display.</p>
         </div>
@@ -272,7 +272,41 @@
             </div>
           </div>
         </div>
-        
+
+        <div class="chord-examples">
+          <p class="chord-examples-label">Make chords - press multiple keys together:</p>
+          <div class="chord-example">
+            <div class="chord-keys">
+              <kbd class="note-c">Q</kbd>
+              <span class="plus">+</span>
+              <kbd class="note-e">E</kbd>
+              <span class="plus">+</span>
+              <kbd class="note-g">T</kbd>
+            </div>
+            <span class="chord-result">= C Major</span>
+          </div>
+          <div class="chord-example">
+            <div class="chord-keys">
+              <kbd class="note-d">W</kbd>
+              <span class="plus">+</span>
+              <kbd class="note-f">R</kbd>
+              <span class="plus">+</span>
+              <kbd class="note-a">Y</kbd>
+            </div>
+            <span class="chord-result">= D minor</span>
+          </div>
+          <div class="chord-example">
+            <div class="chord-keys">
+              <kbd class="note-e">E</kbd>
+              <span class="plus">+</span>
+              <kbd class="note-g">T</kbd>
+              <span class="plus">+</span>
+              <kbd class="note-b">U</kbd>
+            </div>
+            <span class="chord-result">= Em</span>
+          </div>
+        </div>
+
         <p class="welcome-hint">You can also click notes on the wheel. Press <kbd>?</kbd> for full help.</p>
         
         <button id="welcome-start-btn" class="welcome-btn">Start Playing</button>
